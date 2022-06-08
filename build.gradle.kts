@@ -9,6 +9,7 @@ repositories {
 dependencies {
     implementation("net.dv8tion:JDA:5.0.0-alpha.12")
     implementation("com.googlecode.json-simple:json-simple:1.1.1")
+    implementation("com.google.code.gson:gson:2.8.7")
 }
 
 plugins {
@@ -16,9 +17,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version("7.1.2")
 }
 
-application {
-    mainClass.set("xyz.srnyx.srnyx_bot.Main")
-}
+application.mainClass.set("xyz.srnyx.srnyx_bot.Main")
 
 tasks {
     compileJava {
