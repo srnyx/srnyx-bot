@@ -4,14 +4,60 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.requests.restaction.InviteAction;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 
 public class Listeners extends ListenerAdapter {
+    /**
+     * Called when a slash command is ran
+     */
+    @Override
+    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+        if (event.getName().equals("invites")) {
+            final OptionMapping amount = event.getOption("amount");
+            if (amount == null) return;
+
+            final OptionMapping channelOption = event.getOption("channel");
+            TextChannel channel = event.getTextChannel();
+            if (channelOption != null && channelOption.getAsTextChannel() != null) channel = channelOption.getAsTextChannel();
+            final TextChannel finalChannel = channel;
+
+            if (!event.getUser().getId().equals("242385234992037888")) return;
+
+            event.deferReply().queue();
+
+            int i = amount.getAsInt();
+            int age = 604800;
+            final List<InviteAction> actions = new ArrayList<>();
+            while (i > 0) {
+                int finalAge = age;
+                new Timer().schedule(new TimerTask() {public void run() {
+                    actions.add(finalChannel.createInvite().setMaxUses(1).setMaxAge(finalAge));
+                }}, 1000);
+
+                age--;
+                i--;
+            }
+
+            new Timer().schedule(new TimerTask() {public void run() {
+                RestAction.allOf(actions).queue(invites -> {
+                    final StringBuilder string = new StringBuilder();
+                    for (Invite invite : invites) string.append("<").append(invite.getUrl()).append(">").append("\n");
+                    event.getChannel().sendMessage(string.toString()).queue();
+                });
+
+                event.getHook().deleteOriginal().queue();
+            }}, 1000L * amount.getAsInt());
+        }
+    }
+
     /**
      * Called when a message is sent in a guild
      */

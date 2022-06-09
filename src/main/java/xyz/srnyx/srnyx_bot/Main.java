@@ -3,7 +3,10 @@ package xyz.srnyx.srnyx_bot;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -48,7 +51,14 @@ public class Main {
 
         // Start bot
         try {
-            JDABuilder.createDefault(token).build().awaitReady().addEventListener(new Listeners());
+            final JDA jda = JDABuilder.createDefault(token).build().awaitReady();
+
+            jda.addEventListener(new Listeners());
+            jda.updateCommands().addCommands(
+                    Commands.slash("invites", "Creates X invites")
+                            .addOption(OptionType.INTEGER, "amount", "The number of invites to create", true)
+                            .addOption(OptionType.CHANNEL, "channel", "The channel to create the invites in", false)
+            ).queue();
         } catch (LoginException | InterruptedException e) {
             e.printStackTrace();
             Thread.currentThread().interrupt();
