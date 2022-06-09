@@ -1,5 +1,5 @@
 description = "srnyx-Bot"
-version = "1.2.0"
+version = "1.2.1"
 
 repositories {
     maven("https://m2.dv8tion.net/releases")
@@ -9,7 +9,7 @@ repositories {
 dependencies {
     implementation("net.dv8tion:JDA:5.0.0-alpha.12")
     implementation("com.googlecode.json-simple:json-simple:1.1.1")
-    implementation("com.google.code.gson:gson:2.8.7")
+    implementation("com.google.code.gson:gson:2.9.0")
 }
 
 plugins {

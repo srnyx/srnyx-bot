@@ -12,6 +12,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import xyz.srnyx.srnyx_bot.listeners.*;
+
 import javax.security.auth.login.LoginException;
 
 import java.io.File;
@@ -53,7 +55,10 @@ public class Main {
         try {
             final JDA jda = JDABuilder.createDefault(token).build().awaitReady();
 
-            jda.addEventListener(new Listeners());
+            jda.addEventListener(new CommandListener());
+            jda.addEventListener(new MessageListener());
+            jda.addEventListener(new VoiceListener());
+
             jda.updateCommands().addCommands(
                     Commands.slash("invites", "Creates X invites")
                             .addOption(OptionType.INTEGER, "amount", "The number of invites to create", true)
