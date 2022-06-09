@@ -1,5 +1,5 @@
 description = "srnyx-Bot"
-version = "1.1.0"
+version = "1.2.0"
 
 repositories {
     maven("https://m2.dv8tion.net/releases")
