@@ -21,6 +21,8 @@ public class CommandListener extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         if (event.getName().equals("invites")) {
+            if (!event.getUser().getId().equals("242385234992037888")) return;
+
             final OptionMapping amount = event.getOption("amount");
             if (amount == null) return;
 
@@ -29,19 +31,13 @@ public class CommandListener extends ListenerAdapter {
             if (channelOption != null && channelOption.getAsTextChannel() != null) channel = channelOption.getAsTextChannel();
             final TextChannel finalChannel = channel;
 
-            if (!event.getUser().getId().equals("242385234992037888")) return;
-
             event.deferReply().queue();
 
             int i = amount.getAsInt();
             int age = 604800;
             final List<InviteAction> actions = new ArrayList<>();
             while (i > 0) {
-                int finalAge = age;
-                new Timer().schedule(new TimerTask() {public void run() {
-                    actions.add(finalChannel.createInvite().setMaxUses(1).setMaxAge(finalAge));
-                }}, 1000);
-
+                actions.add(finalChannel.createInvite().setMaxUses(1).setMaxAge(age));
                 age--;
                 i--;
             }

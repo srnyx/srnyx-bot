@@ -15,7 +15,6 @@ import org.json.simple.parser.ParseException;
 import xyz.srnyx.srnyx_bot.listeners.*;
 
 import javax.security.auth.login.LoginException;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
