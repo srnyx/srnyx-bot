@@ -76,16 +76,22 @@ public class Main {
     public static void createConfig() {
         if (!new File("config.json").exists()) {
             JSONObject tokenObject = new JSONObject();
+
             // Token
             tokenObject.put("token", "TOKEN_HERE");
+
             // Friend stuff
             tokenObject.put("friends_vc", "VC_ID_HERE");
             tokenObject.put("friends_waiting", "VC_ID_HERE");
+
             // Cross-chat
             tokenObject.put("crosschat_one_guild", "GUILD_ID_HERE");
             tokenObject.put("crosschat_one_channel", "TC_ID_HERE");
             tokenObject.put("crosschat_two_guild", "GUILD_ID_HERE");
             tokenObject.put("crosschat_two_channel", "TC_ID_HERE");
+
+            // GeekSMP
+            tokenObject.put("gsmp_suggestions", "TC_ID_HERE");
 
             try (FileWriter file = new FileWriter("config.json")) {
                 // Write pretty JSON using GSON to file
