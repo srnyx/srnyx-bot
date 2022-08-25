@@ -90,9 +90,6 @@ public class Main {
             tokenObject.put("crosschat_two_guild", "GUILD_ID_HERE");
             tokenObject.put("crosschat_two_channel", "TC_ID_HERE");
 
-            // GeekSMP
-            tokenObject.put("gsmp_suggestions", "TC_ID_HERE");
-
             try (FileWriter file = new FileWriter("config.json")) {
                 // Write pretty JSON using GSON to file
                 file.write(new GsonBuilder().setPrettyPrinting().create().toJson(JsonParser.parseString(tokenObject.toJSONString())));
