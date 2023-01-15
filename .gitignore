@@ -4,3 +4,6 @@
 # Gradle
 .gradle/
 build/
+
+# Bot
+config.json
