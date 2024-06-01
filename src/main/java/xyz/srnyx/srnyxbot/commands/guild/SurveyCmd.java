@@ -20,9 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import xyz.srnyx.srnyxbot.SrnyxBot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.NoSuchElementException;
 
 
 @CommandMarker @UserPermissions(Permission.ADMINISTRATOR)
@@ -36,7 +35,7 @@ public class SurveyCmd extends ApplicationCommand {
             defaultLocked = true)
     public void surveyCommand(@NotNull GuildSlashEvent event,
                               @AppOption(description = "The users to add the role to (separate using '=:=')") @NotNull String users) {
-        if (!bot.config.checkOwner(event, event.getUser().getIdLong())) return;
+        if (bot.config.checkNotOwner(event, event.getUser().getIdLong())) return;
         final Guild guild = event.getGuild();
         if (guild.getIdLong() != 617280459717476353L) {
             event.reply("This command is only available in **CommandGeek Labs**").setEphemeral(true).queue();
@@ -49,27 +48,23 @@ public class SurveyCmd extends ApplicationCommand {
 
         // Give role to users
         final List<String> failed = new ArrayList<>();
-        final Map<Member, String> guildMemberTags = new HashMap<>();
-        guild.loadMembers().onSuccess(members -> members.forEach(member -> guildMemberTags.put(member, member.getUser().getAsTag())));
         for (final String string : users.split("=:=")) {
             // Get Member
             Member member;
             try {
                 member = guild.retrieveMemberById(Long.parseLong(string)).complete();
             } catch (final NumberFormatException | ErrorResponseException e) {
-                member = guildMemberTags.entrySet().stream()
-                        .filter(entry -> entry.getValue().equals(string))
-                        .map(Map.Entry::getKey)
-                        .findFirst()
-                        .orElse(null);
+                try {
+                    member = guild.getMembersByName(string, false).getFirst();
+                } catch (final NoSuchElementException e2) {
+                    member = null;
+                }
             }
-
             // Failed
             if (member == null) {
                 failed.add(string);
                 continue;
             }
-
             // Success, add role
             guild.addRoleToMember(member, role).queue();
         }

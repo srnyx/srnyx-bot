@@ -1,14 +1,13 @@
-package xyz.srnyx.srnyxbot.managers;
+package xyz.srnyx.srnyxbot;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageType;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.utils.FileUpload;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import xyz.srnyx.srnyxbot.SrnyxBot;
 
 import java.util.Collections;
 
@@ -50,14 +49,17 @@ public class CrossChatManager {
             final Message reply = message.getReferencedMessage();
             if (reply == null) return;
             final Message reply2 = reply(reply, channel);
-            if (reply2 != null) reply2.reply("**`" + user.getAsTag() + "`** " + messageContent)
+            if (reply2 != null) reply2.reply("**`" + user.getName() + "`** " + messageContent)
                     .setAllowedMentions(Collections.singleton(Message.MentionType.CHANNEL))
                     .mentionRepliedUser(false)
                     .queue();
             return;
         }
 
-        channel.sendMessage("**`" + user.getAsTag() + "`** " + messageContent)
+        channel.sendMessage("**`" + user.getName() + "`** " + messageContent)
+                .setFiles(message.getAttachments().stream()
+                        .map(attachment -> FileUpload.fromData(attachment.getProxy().download().join(), attachment.getFileName()))
+                        .toList())
                 .setAllowedMentions(Collections.singleton(Message.MentionType.CHANNEL))
                 .queue();
     }

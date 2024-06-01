@@ -6,4 +6,4 @@
 build/
 
 # Bot
-config.json
+/config.yml

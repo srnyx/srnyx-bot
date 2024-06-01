@@ -1,6 +1,19 @@
-token: "TOKEN_HERE"
+# REQUIRED
+# Token to run the bot with
+token: "PUT_BOT_TOKEN_HERE"
 
-owner: 242385234992037888
+# RECOMMENDED
+# Database to use for components (THIS IS NOT FOR THE BOT'S DATA)
+# Supports: MariaDB, SQLite, PostgreSQL, H2
+database: "PUT_CONNECTION_STRING_HERE"
+
+# RECOMMENDED
+# Owner IDs of the bot
+owners:
+  # This one will be DMed when an error occurs
+  primary: 242385234992037888
+  # These will just be able to use owner commands
+  other: []
 
 friends:
   guild: 674747332440358931
@@ -14,3 +27,8 @@ crosschat:
   two:
     guild: GUILD_ID_HERE
     channel: TC_ID_HERE
+
+approvals:
+  1116404689743921243: # OFFICIAL GILDEDGUY FAN CLUB 100% REAL
+    role: 1116407759844425908 # fan
+    channel: 1116406779354546297 # approval

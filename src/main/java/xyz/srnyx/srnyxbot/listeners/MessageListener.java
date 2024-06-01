@@ -1,27 +1,27 @@
 package xyz.srnyx.srnyxbot.listeners;
 
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import org.jetbrains.annotations.NotNull;
 
+import xyz.srnyx.lazylibrary.LazyListener;
+
 import xyz.srnyx.srnyxbot.SrnyxBot;
-import xyz.srnyx.srnyxbot.managers.CrossChatManager;
+import xyz.srnyx.srnyxbot.CrossChatManager;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Objects;
 
 
-public class MessageListener extends ListenerAdapter {
+public class MessageListener extends LazyListener {
     private static final Map<String, Emoji> alphabetEmojis = new HashMap<>();
-
     static  {
         alphabetEmojis.put("a", Emoji.fromUnicode("U+1F1E6"));
         alphabetEmojis.put("b", Emoji.fromUnicode("U+1F1E7"));
@@ -58,7 +58,18 @@ public class MessageListener extends ListenerAdapter {
     }
 
     /**
-     * Called when a message is sent in a guild
+     * Indicates that a Message was received in a {@link net.dv8tion.jda.api.entities.channel.middleman.MessageChannel MessageChannel}.
+     * <br>This includes {@link TextChannel TextChannel} and {@link PrivateChannel PrivateChannel}!
+     *
+     * <p>Can be used to detect that a Message is received in either a guild- or private channel. Providing a MessageChannel and Message.
+     *
+     * <p><b>Requirements</b><br>
+     *
+     * <p>This event requires at least one of the following intents (Will not fire at all if neither is enabled):
+     * <ul>
+     *     <li>{@link net.dv8tion.jda.api.requests.GatewayIntent#GUILD_MESSAGES GUILD_MESSAGES} to work in guild text channels</li>
+     *     <li>{@link net.dv8tion.jda.api.requests.GatewayIntent#DIRECT_MESSAGES DIRECT_MESSAGES} to work in private channels</li>
+     * </ul>
      */
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
@@ -67,11 +78,12 @@ public class MessageListener extends ListenerAdapter {
         final Message message = event.getMessage();
 
         // "react" trigger
-        if (member.hasPermission(Permission.MESSAGE_MANAGE)) {
-            final Matcher matcher = Pattern.compile("react[^ ]*").matcher(message.getContentRaw());
-            if (matcher.find()) Arrays.stream(matcher.group().substring(5).split(""))
-                    .filter(alphabetEmojis::containsKey)
+        if (member.hasPermission(Permission.MESSAGE_MANAGE, Permission.MESSAGE_ADD_REACTION)) {
+            final String[] words = message.getContentRaw().split(" ");
+            final String lastWord = words[words.length - 1];
+            if (lastWord.startsWith("react") && !lastWord.startsWith("reaction") && lastWord.length() > 5) Arrays.stream(lastWord.substring(5).split(""))
                     .map(alphabetEmojis::get)
+                    .filter(Objects::nonNull)
                     .forEach(emoji -> message.addReaction(emoji).queue());
         }
 

@@ -1,47 +1,78 @@
 package xyz.srnyx.srnyxbot.listeners;
 
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import org.jetbrains.annotations.NotNull;
 
+import xyz.srnyx.lazylibrary.LazyListener;
+import xyz.srnyx.lazylibrary.events.GuildVoiceJoinEvent;
+import xyz.srnyx.lazylibrary.events.GuildVoiceLeaveEvent;
+
 import xyz.srnyx.srnyxbot.SrnyxBot;
-import xyz.srnyx.srnyxbot.managers.FriendsManager;
+
+import java.util.List;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
-public class VoiceListener extends ListenerAdapter {
+public class VoiceListener extends LazyListener {
+    @NotNull public static final ScheduledExecutorService EXECUTOR = Executors.newScheduledThreadPool(1);
+
     @NotNull private final SrnyxBot bot;
 
     public VoiceListener(@NotNull SrnyxBot bot) {
         this.bot = bot;
     }
 
-    @Override
-    public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
-        // Joined
-        if (event.getChannelJoined() != null) {
-            onGuildVoiceJoin(event);
-            return;
-        }
-
-        // Left
-        if (event.getChannelLeft() != null) onGuildVoiceLeave(event);
-    }
-
     /**
      * Called when a user joins a voice channel
      */
-    public void onGuildVoiceJoin(@NotNull GuildVoiceUpdateEvent event) {
-        final AudioChannelUnion channelJoined = event.getChannelJoined();
-        if (channelJoined != null) FriendsManager.move(bot, event.getChannelJoined());
+    @Override
+    public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent event) {
+        move(event.getChannelJoined());
     }
 
     /**
      * Called when a user leaves a voice channel
      */
-    public void onGuildVoiceLeave(@NotNull GuildVoiceUpdateEvent event) {
-        final AudioChannelUnion channelLeft = event.getChannelLeft();
-        if (channelLeft != null) FriendsManager.move(bot, event.getChannelLeft());
+    @Override
+    public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
+        move(event.getChannelLeft());
+    }
+
+    /**
+     * Moves users from either the Waiting for friend VC or the Friends VC to the other one
+     */
+    public void move(@NotNull AudioChannelUnion channel) {
+        final long id = channel.getIdLong();
+        final boolean isFriendsVc = id == bot.config.friendsVc;
+        if (!isFriendsVc && id != bot.config.friendsWaiting) return;
+        final Guild guild = channel.getGuild();
+
+        EXECUTOR.schedule(new TimerTask() {
+            public void run() {
+                final List<Member> members = channel.getMembers().stream()
+                        .filter(member -> !member.getUser().isBot())
+                        .toList();
+                final int size = members.size();
+
+                long moveTo;
+                if (isFriendsVc) {
+                    if (size >= 2) return;
+                    moveTo = bot.config.friendsWaiting;
+                } else {
+                    if (size < 2) return;
+                    moveTo = bot.config.friendsVc;
+                }
+
+                final AudioChannel moveToChannel = guild.getChannelById(AudioChannel.class, moveTo);
+                for (final Member member : members) if (members.contains(member)) guild.moveVoiceMember(member, moveToChannel).queue();
+            }
+        }, 1, TimeUnit.SECONDS);
     }
 }
