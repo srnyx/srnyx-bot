@@ -21,34 +21,34 @@ import java.util.Objects;
 
 
 public class MessageListener extends LazyListener {
-    private static final Map<String, Emoji> alphabetEmojis = new HashMap<>();
+    private static final Map<String, Emoji> ALPHABET_EMOJIS = new HashMap<>();
     static  {
-        alphabetEmojis.put("a", Emoji.fromUnicode("U+1F1E6"));
-        alphabetEmojis.put("b", Emoji.fromUnicode("U+1F1E7"));
-        alphabetEmojis.put("c", Emoji.fromUnicode("U+1F1E8"));
-        alphabetEmojis.put("d", Emoji.fromUnicode("U+1F1E9"));
-        alphabetEmojis.put("e", Emoji.fromUnicode("U+1F1EA"));
-        alphabetEmojis.put("f", Emoji.fromUnicode("U+1F1EB"));
-        alphabetEmojis.put("g", Emoji.fromUnicode("U+1F1EC"));
-        alphabetEmojis.put("h", Emoji.fromUnicode("U+1F1ED"));
-        alphabetEmojis.put("i", Emoji.fromUnicode("U+1F1EE"));
-        alphabetEmojis.put("j", Emoji.fromUnicode("U+1F1EF"));
-        alphabetEmojis.put("k", Emoji.fromUnicode("U+1F1F0"));
-        alphabetEmojis.put("l", Emoji.fromUnicode("U+1F1F1"));
-        alphabetEmojis.put("m", Emoji.fromUnicode("U+1F1F2"));
-        alphabetEmojis.put("n", Emoji.fromUnicode("U+1F1F3"));
-        alphabetEmojis.put("o", Emoji.fromUnicode("U+1F1F4"));
-        alphabetEmojis.put("p", Emoji.fromUnicode("U+1F1F5"));
-        alphabetEmojis.put("q", Emoji.fromUnicode("U+1F1F6"));
-        alphabetEmojis.put("r", Emoji.fromUnicode("U+1F1F7"));
-        alphabetEmojis.put("s", Emoji.fromUnicode("U+1F1F8"));
-        alphabetEmojis.put("t", Emoji.fromUnicode("U+1F1F9"));
-        alphabetEmojis.put("u", Emoji.fromUnicode("U+1F1FA"));
-        alphabetEmojis.put("v", Emoji.fromUnicode("U+1F1FB"));
-        alphabetEmojis.put("w", Emoji.fromUnicode("U+1F1FC"));
-        alphabetEmojis.put("x", Emoji.fromUnicode("U+1F1FD"));
-        alphabetEmojis.put("y", Emoji.fromUnicode("U+1F1FE"));
-        alphabetEmojis.put("z", Emoji.fromUnicode("U+1F1FF"));
+        ALPHABET_EMOJIS.put("a", Emoji.fromUnicode("U+1F1E6"));
+        ALPHABET_EMOJIS.put("b", Emoji.fromUnicode("U+1F1E7"));
+        ALPHABET_EMOJIS.put("c", Emoji.fromUnicode("U+1F1E8"));
+        ALPHABET_EMOJIS.put("d", Emoji.fromUnicode("U+1F1E9"));
+        ALPHABET_EMOJIS.put("e", Emoji.fromUnicode("U+1F1EA"));
+        ALPHABET_EMOJIS.put("f", Emoji.fromUnicode("U+1F1EB"));
+        ALPHABET_EMOJIS.put("g", Emoji.fromUnicode("U+1F1EC"));
+        ALPHABET_EMOJIS.put("h", Emoji.fromUnicode("U+1F1ED"));
+        ALPHABET_EMOJIS.put("i", Emoji.fromUnicode("U+1F1EE"));
+        ALPHABET_EMOJIS.put("j", Emoji.fromUnicode("U+1F1EF"));
+        ALPHABET_EMOJIS.put("k", Emoji.fromUnicode("U+1F1F0"));
+        ALPHABET_EMOJIS.put("l", Emoji.fromUnicode("U+1F1F1"));
+        ALPHABET_EMOJIS.put("m", Emoji.fromUnicode("U+1F1F2"));
+        ALPHABET_EMOJIS.put("n", Emoji.fromUnicode("U+1F1F3"));
+        ALPHABET_EMOJIS.put("o", Emoji.fromUnicode("U+1F1F4"));
+        ALPHABET_EMOJIS.put("p", Emoji.fromUnicode("U+1F1F5"));
+        ALPHABET_EMOJIS.put("q", Emoji.fromUnicode("U+1F1F6"));
+        ALPHABET_EMOJIS.put("r", Emoji.fromUnicode("U+1F1F7"));
+        ALPHABET_EMOJIS.put("s", Emoji.fromUnicode("U+1F1F8"));
+        ALPHABET_EMOJIS.put("t", Emoji.fromUnicode("U+1F1F9"));
+        ALPHABET_EMOJIS.put("u", Emoji.fromUnicode("U+1F1FA"));
+        ALPHABET_EMOJIS.put("v", Emoji.fromUnicode("U+1F1FB"));
+        ALPHABET_EMOJIS.put("w", Emoji.fromUnicode("U+1F1FC"));
+        ALPHABET_EMOJIS.put("x", Emoji.fromUnicode("U+1F1FD"));
+        ALPHABET_EMOJIS.put("y", Emoji.fromUnicode("U+1F1FE"));
+        ALPHABET_EMOJIS.put("z", Emoji.fromUnicode("U+1F1FF"));
     }
 
     @NotNull private final SrnyxBot bot;
@@ -82,7 +82,7 @@ public class MessageListener extends LazyListener {
             final String[] words = message.getContentRaw().split(" ");
             final String lastWord = words[words.length - 1];
             if (lastWord.startsWith("react") && !lastWord.startsWith("reaction") && lastWord.length() > 5) Arrays.stream(lastWord.substring(5).split(""))
-                    .map(alphabetEmojis::get)
+                    .map(ALPHABET_EMOJIS::get)
                     .filter(Objects::nonNull)
                     .forEach(emoji -> message.addReaction(emoji).queue());
         }
