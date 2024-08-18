@@ -6,8 +6,8 @@ import xyz.srnyx.gradlegalaxy.utility.setupJava
 
 plugins {
     application
-    id("xyz.srnyx.gradle-galaxy") version "1.1.3"
-    id("io.github.goooler.shadow") version "8.1.7"
+    id("xyz.srnyx.gradle-galaxy") version "1.2.3"
+    id("com.gradleup.shadow") version "8.3.0"
 }
 
 setupJava("xyz.srnyx", "1.3.0")
@@ -16,8 +16,8 @@ addCompilerArgs("-parameters")
 
 repository(Repository.MAVEN_CENTRAL, Repository.JITPACK)
 dependencies {
-    implementation("net.dv8tion", "JDA", "5.0.0-beta.24")
-    implementation("xyz.srnyx", "lazy-library", "42a89280cc")
+    implementation("net.dv8tion", "JDA", "5.0.2")
+    implementation("xyz.srnyx", "lazy-library", "aed33d3728")
     compileOnly("io.github.freya022", "BotCommands", "2.10.3") // For documentation
 }
 

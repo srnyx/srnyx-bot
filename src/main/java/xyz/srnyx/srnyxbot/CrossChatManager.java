@@ -25,15 +25,11 @@ public class CrossChatManager {
         final long channel = message.getChannel().getIdLong();
 
         if (channel == bot.config.crosschatTwoChannel) {
-            final MessageChannel otherChannel = bot.config.getCrosschatOneChannel();
-            if (otherChannel != null) send(otherChannel);
+            bot.config.getCrosschatOneChannel().ifPresent(this::send);
             return;
         }
 
-        if (channel == bot.config.crosschatOneChannel) {
-            final MessageChannel otherChannel = bot.config.getCrosschatTwoChannel();
-            if (otherChannel != null) send(otherChannel);
-        }
+        if (channel == bot.config.crosschatOneChannel) bot.config.getCrosschatTwoChannel().ifPresent(this::send);
     }
 
     /**

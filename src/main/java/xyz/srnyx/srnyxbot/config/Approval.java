@@ -6,30 +6,27 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 
 public record Approval(@NotNull JDA jda, long guildId, long roleId, long channelId) {
     public boolean isNull() {
-        return getRole() == null || getChannel() == null;
+        return getRole().isEmpty() || getChannel().isEmpty();
     }
 
-    @Nullable
-    public Guild getGuild() {
-        return jda.getGuildById(guildId);
+    @NotNull
+    public Optional<Guild> getGuild() {
+        return Optional.ofNullable(jda.getGuildById(guildId));
     }
 
-    @Nullable
-    public Role getRole() {
-        final Guild guild = getGuild();
-        if (guild == null) return null;
-        return guild.getRoleById(roleId);
+    @NotNull
+    public Optional<Role> getRole() {
+        return getGuild().map(guild -> guild.getRoleById(roleId));
     }
 
-    @Nullable
-    public TextChannel getChannel() {
-        final Guild guild = getGuild();
-        if (guild == null) return null;
-        return guild.getTextChannelById(channelId);
+    @NotNull
+    public Optional<TextChannel> getChannel() {
+        return getGuild().map(guild -> guild.getTextChannelById(channelId));
     }
 }
