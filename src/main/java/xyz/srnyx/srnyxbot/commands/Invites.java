@@ -1,4 +1,4 @@
-package xyz.srnyx.srnyxbot.commands.guild;
+package xyz.srnyx.srnyxbot.commands;
 
 import com.freya02.botcommands.api.annotations.CommandMarker;
 import com.freya02.botcommands.api.annotations.Dependency;
@@ -23,13 +23,13 @@ import xyz.srnyx.srnyxbot.SrnyxBot;
 
 
 @CommandMarker @UserPermissions(Permission.ADMINISTRATOR)
-public class InvitesCmd extends ApplicationCommand {
+public class Invites extends ApplicationCommand {
     @Dependency private SrnyxBot bot;
 
     @JDASlashCommand(
             scope = CommandScope.GUILD,
             name = "invites",
-            description = "Creates multiple single-use invites for the specified channel")
+            description = "SRNYX | Create multiple single-use invites for the specified channel")
     public void invitesCommand(@NotNull GuildSlashEvent event,
                                @AppOption(description = "The amount of invites to create (max 50)") @LongRange(from = 1, to = 50) int amount,
                                @AppOption(description = "The channel to create invites for") @ChannelTypes({ChannelType.NEWS, ChannelType.TEXT, ChannelType.VOICE, ChannelType.STAGE, ChannelType.FORUM}) @Nullable GuildChannel channel) {
