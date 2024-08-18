@@ -10,7 +10,7 @@ plugins {
     id("com.gradleup.shadow") version "8.3.0"
 }
 
-setupJava("xyz.srnyx", "1.3.0")
+setupJava("xyz.srnyx", "2.0.0")
 application.mainClass.set("xyz.srnyx.srnyxbot.SrnyxBot")
 addCompilerArgs("-parameters")
 
