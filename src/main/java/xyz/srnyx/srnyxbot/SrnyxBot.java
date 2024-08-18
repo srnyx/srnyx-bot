@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import org.jetbrains.annotations.NotNull;
 
+import xyz.srnyx.lazylibrary.LazyEmbed;
 import xyz.srnyx.lazylibrary.LazyLibrary;
 
 import xyz.srnyx.srnyxbot.config.SrnyxConfig;
@@ -39,7 +40,10 @@ public class SrnyxBot extends LazyLibrary {
 
         // Set status
         final Presence presence = jda.getPresence();
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -> presence.setActivity(Activity.watching(statuses[RANDOM.nextInt(length)])), 0, 20, TimeUnit.SECONDS);
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -> presence.setActivity(Activity.watching(statuses[RANDOM.nextInt(length)])), 0, 30, TimeUnit.SECONDS);
+
+        // Status log message
+        LOGGER.info("srnyx's Bot has finished starting!");
     }
 
     @Override
@@ -57,7 +61,10 @@ public class SrnyxBot extends LazyLibrary {
                         GatewayIntent.GUILD_MEMBERS,
                         GatewayIntent.GUILD_MESSAGES,
                         GatewayIntent.GUILD_MESSAGE_TYPING,
-                        GatewayIntent.GUILD_VOICE_STATES);
+                        GatewayIntent.GUILD_VOICE_STATES)
+                .embedDefault(LazyEmbed.Key.COLOR, 3840960)
+                .embedDefault(LazyEmbed.Key.FOOTER_TEXT, "srnyx's Bot")
+                .embedDefault(LazyEmbed.Key.FOOTER_ICON, "https://media.srnyx.com/r/circle.png");
     }
 
     public static void main(@NotNull String[] arguments) {
