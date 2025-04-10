@@ -1,38 +1,12 @@
-import xyz.srnyx.gradlegalaxy.enums.Repository
-import xyz.srnyx.gradlegalaxy.enums.repository
-import xyz.srnyx.gradlegalaxy.utility.addCompilerArgs
-import xyz.srnyx.gradlegalaxy.utility.setupJava
+import xyz.srnyx.gradlegalaxy.utility.setupLazyLibrary
 
 
 plugins {
     application
-    id("xyz.srnyx.gradle-galaxy") version "1.2.3"
-    id("com.gradleup.shadow") version "8.3.0"
+    id("xyz.srnyx.gradle-galaxy") version "1.3.3"
+    id("com.gradleup.shadow") version "8.3.6"
 }
 
-setupJava("xyz.srnyx", "2.0.0")
-application.mainClass.set("xyz.srnyx.srnyxbot.SrnyxBot")
-addCompilerArgs("-parameters")
+setupLazyLibrary("e7af7ab598", "5.3.2", "xyz.srnyx", "2.0.0")
 
-repository(Repository.MAVEN_CENTRAL, Repository.JITPACK)
-dependencies {
-    implementation("net.dv8tion", "JDA", "5.0.2")
-    implementation("xyz.srnyx", "lazy-library", "aed33d3728")
-    compileOnly("io.github.freya022", "BotCommands", "2.10.3") // For documentation
-}
-
-// Fix some tasks
-tasks {
-    distZip {
-        dependsOn("shadowJar")
-    }
-    distTar {
-        dependsOn("shadowJar")
-    }
-    startScripts {
-        dependsOn("shadowJar")
-    }
-    startShadowScripts {
-        dependsOn("jar")
-    }
-}
+dependencies.compileOnly("io.github.freya022", "BotCommands", "2.10.4") // For documentation
