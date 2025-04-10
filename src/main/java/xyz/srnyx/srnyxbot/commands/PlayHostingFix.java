@@ -47,7 +47,7 @@ public class PlayHostingFix extends ApplicationCommand {
         // Get ticket channels (start with ticket_ / limbo_ / creator_)
         for (final TextChannel channel : guild.getTextChannels()) {
             final String name = channel.getName();
-            if (name.startsWith("ticket_") || name.startsWith("limbo_") || name.startsWith("creator_")) {
+            if ((name.startsWith("ticket_") || name.startsWith("limbo_") || name.startsWith("creator_")) && channel.getPermissionContainer().getPermissionOverride(role) == null) {
                 channel.upsertPermissionOverride(role).grant(Permission.VIEW_CHANNEL, Permission.MESSAGE_SEND, Permission.MESSAGE_HISTORY).queue();
             }
         }
