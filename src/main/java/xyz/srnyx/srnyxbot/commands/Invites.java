@@ -4,7 +4,6 @@ import com.freya02.botcommands.api.annotations.CommandMarker;
 import com.freya02.botcommands.api.annotations.Dependency;
 import com.freya02.botcommands.api.annotations.UserPermissions;
 import com.freya02.botcommands.api.application.ApplicationCommand;
-import com.freya02.botcommands.api.application.CommandScope;
 import com.freya02.botcommands.api.application.annotations.AppOption;
 import com.freya02.botcommands.api.application.slash.GuildSlashEvent;
 import com.freya02.botcommands.api.application.slash.annotations.ChannelTypes;
@@ -27,7 +26,6 @@ public class Invites extends ApplicationCommand {
     @Dependency private SrnyxBot bot;
 
     @JDASlashCommand(
-            scope = CommandScope.GUILD,
             name = "invites",
             description = "SRNYX | Create multiple single-use invites for the specified channel")
     public void invitesCommand(@NotNull GuildSlashEvent event,

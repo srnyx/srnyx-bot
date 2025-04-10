@@ -29,7 +29,6 @@ public class Survey extends ApplicationCommand {
     @Dependency private SrnyxBot bot;
 
     @JDASlashCommand(
-            scope = CommandScope.GUILD,
             name = "survey",
             description = "CG | Add survey role to specified users",
             defaultLocked = true)
