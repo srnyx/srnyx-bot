@@ -2,6 +2,7 @@ package xyz.srnyx.srnyxbot.apps;
 
 import com.freya02.botcommands.api.annotations.CommandMarker;
 import com.freya02.botcommands.api.annotations.Dependency;
+import com.freya02.botcommands.api.application.ApplicationCommand;
 import com.freya02.botcommands.api.application.context.annotations.JDAMessageCommand;
 import com.freya02.botcommands.api.application.context.message.GuildMessageEvent;
 
@@ -19,7 +20,7 @@ import java.util.regex.Pattern;
 
 
 @CommandMarker
-public class Unsuspend {
+public class Unsuspend extends ApplicationCommand {
     @NotNull private static final String USER_AGENT = "srnyx's Bot";
     @NotNull private static final String URL = "https://panel.play.hosting/api/";
     @NotNull private static final Pattern PATTERN = Pattern.compile("panel\\.play\\.hosting/server/([a-z0-9]{8})");
