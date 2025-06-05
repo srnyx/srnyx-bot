@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import org.spongepowered.configurate.ConfigurationNode;
 
@@ -21,6 +22,8 @@ import java.util.Set;
 
 public class SrnyxConfig {
     @NotNull private final SrnyxBot bot;
+
+    @Nullable public final String playHostingToken;
 
     // FRIENDS
     public final long friendsGuild;
@@ -41,6 +44,8 @@ public class SrnyxConfig {
     public SrnyxConfig(@NotNull SrnyxBot bot) {
         this.bot = bot;
         final ConfigurationNode yaml = bot.settings.fileSettings.file.yaml;
+
+        playHostingToken = yaml.getString("play-hosting-token");
 
         // FRIENDS
         final ConfigurationNode friendsNode = yaml.node("friends");

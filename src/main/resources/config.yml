@@ -15,6 +15,8 @@ owners:
   # These will just be able to use owner commands
   other: []
 
+play-hosting-token: "PUT_PLAY_HOSTING_TOKEN_HERE"
+
 friends:
   guild: 674747332440358931
   waiting: 977313982320873503

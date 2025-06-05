@@ -50,8 +50,9 @@ public class SrnyxBot extends LazyLibrary {
     public void setSettings() {
         settings
                 .searchPaths(
-                        "xyz.srnyx.srnyxbot.components",
-                        "xyz.srnyx.srnyxbot.commands")
+                        "xyz.srnyx.srnyxbot.apps",
+                        "xyz.srnyx.srnyxbot.commands",
+                        "xyz.srnyx.srnyxbot.components")
                 .gatewayIntents(
                         GatewayIntent.SCHEDULED_EVENTS,
                         GatewayIntent.MESSAGE_CONTENT,
