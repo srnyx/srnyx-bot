@@ -3,7 +3,6 @@ package xyz.srnyx.srnyxbot.commands;
 import com.freya02.botcommands.api.annotations.CommandMarker;
 import com.freya02.botcommands.api.annotations.Dependency;
 import com.freya02.botcommands.api.application.ApplicationCommand;
-import com.freya02.botcommands.api.application.CommandScope;
 import com.freya02.botcommands.api.application.annotations.AppOption;
 import com.freya02.botcommands.api.application.slash.GuildSlashEvent;
 import com.freya02.botcommands.api.application.slash.annotations.JDASlashCommand;
@@ -34,7 +33,7 @@ public class Survey extends ApplicationCommand {
             defaultLocked = true)
     public void surveyCommand(@NotNull GuildSlashEvent event,
                               @AppOption(description = "The users to add the role to (separate using '=:=')") @NotNull String users) {
-        if (bot.config.checkNotOwner(event, event.getUser().getIdLong())) return;
+        if (bot.config.checkNotOwner(event)) return;
         final Guild guild = event.getGuild();
         if (guild.getIdLong() != 617280459717476353L) {
             event.reply(LazyEmoji.NO + " This command is only available in **CommandGeek Labs**").setEphemeral(true).queue();

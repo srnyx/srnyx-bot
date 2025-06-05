@@ -1,9 +1,8 @@
 package xyz.srnyx.srnyxbot.config;
 
-import com.freya02.botcommands.api.application.slash.GuildSlashEvent;
-
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -101,8 +100,8 @@ public class SrnyxConfig {
                 .findFirst();
     }
 
-    public boolean checkNotOwner(@NotNull GuildSlashEvent event, long id) {
-        final boolean notOwner = !bot.isOwner(id);
+    public boolean checkNotOwner(@NotNull IReplyCallback event) {
+        final boolean notOwner = !bot.isOwner(event.getUser().getIdLong());
         if (notOwner) event.replyEmbeds(LazyEmbed.noPermission().build(bot)).setEphemeral(true).queue();
         return notOwner;
     }

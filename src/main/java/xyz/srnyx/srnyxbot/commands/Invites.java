@@ -31,7 +31,7 @@ public class Invites extends ApplicationCommand {
     public void invitesCommand(@NotNull GuildSlashEvent event,
                                @AppOption(description = "The amount of invites to create (max 50)") @LongRange(from = 1, to = 50) int amount,
                                @AppOption(description = "The channel to create invites for") @ChannelTypes({ChannelType.NEWS, ChannelType.TEXT, ChannelType.VOICE, ChannelType.STAGE, ChannelType.FORUM}) @Nullable GuildChannel channel) {
-        if (bot.config.checkNotOwner(event, event.getUser().getIdLong())) return;
+        if (bot.config.checkNotOwner(event)) return;
         event.deferReply().queue();
         final StringBuilder builder = new StringBuilder();
         final StandardGuildChannel standardChannel = channel == null ? (StandardGuildChannel) event.getChannel() : (StandardGuildChannel) channel;
