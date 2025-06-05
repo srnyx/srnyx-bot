@@ -6,6 +6,8 @@ import com.freya02.botcommands.api.application.ApplicationCommand;
 import com.freya02.botcommands.api.application.context.annotations.JDAMessageCommand;
 import com.freya02.botcommands.api.application.context.message.GuildMessageEvent;
 
+import net.dv8tion.jda.api.interactions.InteractionHook;
+
 import org.jetbrains.annotations.NotNull;
 
 import xyz.srnyx.javautilities.HttpUtility;
@@ -43,6 +45,10 @@ public class Unsuspend extends ApplicationCommand {
             return;
         }
 
+        // Defer
+        event.deferReply().queue();
+        final InteractionHook hook = event.getHook();
+
         // Get server ID from message
         final String id = PATTERN.matcher(event.getTarget().getContentRaw())
                 .results()
@@ -50,7 +56,7 @@ public class Unsuspend extends ApplicationCommand {
                 .findFirst()
                 .orElse(null);
         if (id == null) {
-            event.reply(LazyEmoji.NO + " **No server link with ID found in message!** Your panel link looks like this: `panel.play.hosting/server/XXXXXXXX`").queue();
+            hook.editOriginal(LazyEmoji.NO + " **No server link with an ID found in the message!** Your panel link looks like this: `panel.play.hosting/server/XXXXXXXX`, please send us that...").queue();
             return;
         }
 
@@ -61,22 +67,26 @@ public class Unsuspend extends ApplicationCommand {
                         .get("internal_id").getAsInt())
                 .orElse(null);
         if (internalId == null) {
-            event.reply(LazyEmoji.NO + " No server found with ID `" + id + "`!").setEphemeral(true).queue();
+            hook.editOriginal(LazyEmoji.NO + " No server found with ID `" + id + "`!").queue();
             return;
         }
 
         // Unsuspend server
         final int response = HttpUtility.postJson(USER_AGENT, URL + "application/servers/" + internalId + "/unsuspend", null, getConnectionConsumer());
         if (response != 204) {
-            event.reply(LazyEmoji.NO + " **Failed to unsuspend server with ID `" + id + "`!** Response code: " + response).setEphemeral(true).queue();
+            hook.editOriginal(LazyEmoji.NO + " **Failed to unsuspend server with ID `" + id + "`!** Response code: " + response).queue();
             return;
         }
 
-        event.reply(LazyEmoji.YES + " Successfully unsuspended server with ID `" + id + "`!").setEphemeral(true).queue();
+        // Reply
+        hook.editOriginal(LazyEmoji.YES + " Successfully unsuspended server with ID `" + id + "`!").queue();
     }
 
     @NotNull
     private Consumer<HttpURLConnection> getConnectionConsumer() {
-        return connection -> connection.setRequestProperty("Authorization", "Bearer " + bot.config.playHostingToken);
+        return connection -> {
+            connection.setRequestProperty("Authorization", "Bearer " + bot.config.playHostingToken);
+            connection.setRequestProperty("Accept", "application/json");
+        };
     }
 }

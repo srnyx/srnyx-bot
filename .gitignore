@@ -6,4 +6,5 @@
 build/
 
 # Bot
+/logs
 /config.yml

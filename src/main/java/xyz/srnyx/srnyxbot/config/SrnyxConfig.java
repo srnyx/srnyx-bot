@@ -45,7 +45,7 @@ public class SrnyxConfig {
         this.bot = bot;
         final ConfigurationNode yaml = bot.settings.fileSettings.file.yaml;
 
-        playHostingToken = yaml.getString("play-hosting-token");
+        playHostingToken = yaml.node("play-hosting-token").getString();
 
         // FRIENDS
         final ConfigurationNode friendsNode = yaml.node("friends");
