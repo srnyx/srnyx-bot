@@ -15,7 +15,10 @@ owners:
   # These will just be able to use owner commands
   other: []
 
-play-hosting-token: "PUT_PLAY_HOSTING_TOKEN_HERE"
+play-hosting:
+  token: "PUT_PLAY_HOSTING_TOKEN_HERE"
+  guild: 1332830032480960542
+  support: 1332832981328597093
 
 friends:
   guild: 674747332440358931

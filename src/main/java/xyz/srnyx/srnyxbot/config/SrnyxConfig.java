@@ -12,18 +12,21 @@ import org.spongepowered.configurate.ConfigurationNode;
 import xyz.srnyx.javautilities.manipulation.Mapper;
 
 import xyz.srnyx.lazylibrary.LazyEmbed;
+import xyz.srnyx.lazylibrary.config.LazyRole;
 
 import xyz.srnyx.srnyxbot.SrnyxBot;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 
 
 public class SrnyxConfig {
     @NotNull private final SrnyxBot bot;
 
-    @Nullable public final String playHostingToken;
+    @NotNull public final PlayHosting playHosting;
 
     // FRIENDS
     public final long friendsGuild;
@@ -45,7 +48,7 @@ public class SrnyxConfig {
         this.bot = bot;
         final ConfigurationNode yaml = bot.settings.fileSettings.file.yaml;
 
-        playHostingToken = yaml.node("play-hosting-token").getString();
+        playHosting = new PlayHosting(yaml.node("play-hosting"));
 
         // FRIENDS
         final ConfigurationNode friendsNode = yaml.node("friends");
@@ -109,5 +112,22 @@ public class SrnyxConfig {
         final boolean notOwner = !bot.isOwner(event.getUser().getIdLong());
         if (notOwner) event.replyEmbeds(LazyEmbed.noPermission().build(bot)).setEphemeral(true).queue();
         return notOwner;
+    }
+
+    public class PlayHosting implements Supplier<Guild> {
+        @Nullable public final String token;
+        public final long guildId;
+        @NotNull public final LazyRole support;
+
+        public PlayHosting(@NotNull ConfigurationNode node) {
+            this.token = node.node("token").getString();
+            this.guildId = node.node("guild").getLong();
+            this.support = new LazyRole(bot, this, node.node("support"));
+        }
+
+        @Override @NotNull
+        public Guild get() {
+            return Objects.requireNonNull(bot.jda.getGuildById(guildId));
+        }
     }
 }

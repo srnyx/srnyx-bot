@@ -7,6 +7,6 @@ plugins {
     id("com.gradleup.shadow") version "8.3.6"
 }
 
-setupLazyLibrary("bdda70fd3d", "5.5.1", "xyz.srnyx", "2.0.0")
+setupLazyLibrary("b29ea95407", "5.5.1", "xyz.srnyx", "2.0.0")
 
 dependencies.compileOnly("io.github.freya022", "BotCommands", "2.10.4") // For documentation
