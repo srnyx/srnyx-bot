@@ -11,6 +11,7 @@ import xyz.srnyx.lazylibrary.LazyEmbed;
 import xyz.srnyx.lazylibrary.LazyLibrary;
 
 import xyz.srnyx.srnyxbot.config.SrnyxConfig;
+import xyz.srnyx.srnyxbot.listeners.AdvertisingListener;
 import xyz.srnyx.srnyxbot.listeners.GuildMemberListener;
 import xyz.srnyx.srnyxbot.listeners.MessageListener;
 import xyz.srnyx.srnyxbot.listeners.VoiceListener;
@@ -32,6 +33,7 @@ public class SrnyxBot extends LazyLibrary {
                 new GuildMemberListener(this),
                 new MessageListener(this),
                 new VoiceListener(this));
+        if (!config.advertising.isEmpty()) jda.addEventListener(new AdvertisingListener(this));
 
         // Get statuses
         final List<Guild> guilds = jda.getGuilds();

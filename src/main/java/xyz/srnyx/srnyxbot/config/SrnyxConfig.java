@@ -16,10 +16,7 @@ import xyz.srnyx.lazylibrary.config.LazyRole;
 
 import xyz.srnyx.srnyxbot.SrnyxBot;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
 
 
@@ -27,6 +24,7 @@ public class SrnyxConfig {
     @NotNull private final SrnyxBot bot;
 
     @NotNull public final PlayHosting playHosting;
+    @NotNull public final Map<Long, Advertising> advertising = new HashMap<>();
 
     // FRIENDS
     public final long friendsGuild;
@@ -49,6 +47,13 @@ public class SrnyxConfig {
         final ConfigurationNode yaml = bot.settings.fileSettings.file.yaml;
 
         playHosting = new PlayHosting(yaml.node("play-hosting"));
+
+        // advertising
+        final ConfigurationNode advertisingNode = yaml.node("advertising");
+        for (final ConfigurationNode node : advertisingNode.childrenMap().values()) {
+            final long guildId = Mapper.toLong(node.key()).orElseThrow(() -> new IllegalArgumentException("Invalid guild ID in advertising config: " + node.key()));
+            advertising.put(guildId, new Advertising(guildId, node));
+        }
 
         // FRIENDS
         final ConfigurationNode friendsNode = yaml.node("friends");
@@ -123,6 +128,23 @@ public class SrnyxConfig {
             this.token = node.node("token").getString();
             this.guildId = node.node("guild").getLong();
             this.support = new LazyRole(bot, this, node.node("support"));
+        }
+
+        @Override @NotNull
+        public Guild get() {
+            return Objects.requireNonNull(bot.jda.getGuildById(guildId));
+        }
+    }
+
+    public class Advertising implements Supplier<Guild> {
+        public final long guildId;
+        @NotNull public final String status;
+        @NotNull public final LazyRole role;
+
+        public Advertising(long guildId, @NotNull ConfigurationNode node) {
+            this.guildId = guildId;
+            this.status = Objects.requireNonNull(node.node("status").getString());
+            this.role = new LazyRole(bot, this, node.node("role"));
         }
 
         @Override @NotNull

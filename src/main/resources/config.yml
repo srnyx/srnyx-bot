@@ -20,6 +20,11 @@ play-hosting:
   guild: 1332830032480960542
   support: 1332832981328597093
 
+advertising:
+  970411885293895801: # guild
+    status: ".gg/skeppy"
+    role: 980518276201316472
+
 friends:
   guild: 674747332440358931
   waiting: 977313982320873503
