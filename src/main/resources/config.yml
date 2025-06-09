@@ -22,7 +22,7 @@ play-hosting:
 
 advertising:
   970411885293895801: # guild
-    status: ".gg/skeppy"
+    invite: "skeppy"
     role: 980518276201316472
 
 friends:

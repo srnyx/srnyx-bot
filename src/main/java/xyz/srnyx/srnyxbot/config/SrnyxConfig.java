@@ -138,12 +138,12 @@ public class SrnyxConfig {
 
     public class Advertising implements Supplier<Guild> {
         public final long guildId;
-        @NotNull public final String status;
+        @NotNull public final String invite;
         @NotNull public final LazyRole role;
 
         public Advertising(long guildId, @NotNull ConfigurationNode node) {
             this.guildId = guildId;
-            this.status = Objects.requireNonNull(node.node("status").getString());
+            this.invite = ".gg/" + Objects.requireNonNull(node.node("invite").getString());
             this.role = new LazyRole(bot, this, node.node("role"));
         }
 
