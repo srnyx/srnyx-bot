@@ -116,10 +116,16 @@ public class Unsuspend extends ApplicationCommand {
     }
 
     private void unsuspend(@NotNull InteractionHook hook, @NotNull String id, @NotNull String applicationServerUrl) {
-        // Unsuspend server
-        final int response = HttpUtility.postJson(USER_AGENT, applicationServerUrl + "/unsuspend", null, getConnectionConsumer());
-        if (response != 204) {
-            hook.editOriginal(LazyEmoji.NO + " **Failed to unsuspend server with ID `" + id + "`!** Response code: " + response)
+        // Try to unsuspend server
+        final HttpUtility.Response response = HttpUtility.postJson(USER_AGENT, applicationServerUrl + "/unsuspend", null, getConnectionConsumer());
+        if (response == null) {
+            hook.editOriginal(LazyEmoji.NO + " **Failed to unsuspend server with ID `" + id + "`!** Contact <@242385234992037888> so he can check the console")
+                    .setComponents()
+                    .queue();
+            return;
+        }
+        if (response.code < 200 || response.code >= 300) {
+            hook.editOriginal(LazyEmoji.NO + " Failed to unsuspend server with ID `" + id + "`!\n**" + response.code + ":** " + response.message)
                     .setComponents()
                     .queue();
             return;
