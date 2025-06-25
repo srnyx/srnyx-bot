@@ -31,6 +31,9 @@ public class Unsuspend extends ApplicationCommand {
     @NotNull private static final String USER_AGENT = "srnyx's Bot";
     @NotNull private static final String URL = "https://panel.play.hosting/api";
     @NotNull private static final Pattern PATTERN = Pattern.compile("panel\\.play\\.hosting/server/([a-z0-9]{8})");
+    static {
+        HttpUtility.DEBUG = true;
+    }
 
     @Dependency private SrnyxBot bot;
 
