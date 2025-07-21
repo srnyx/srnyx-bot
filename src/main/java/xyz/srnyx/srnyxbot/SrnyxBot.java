@@ -2,7 +2,6 @@ package xyz.srnyx.srnyxbot;
 
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.managers.Presence;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import org.jetbrains.annotations.NotNull;
@@ -17,14 +16,9 @@ import xyz.srnyx.srnyxbot.listeners.MessageListener;
 import xyz.srnyx.srnyxbot.listeners.VoiceListener;
 
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 
 public class SrnyxBot extends LazyLibrary {
-    @NotNull private static final Random RANDOM = new Random();
-
     @NotNull public SrnyxConfig config = new SrnyxConfig(this);
 
     public SrnyxBot() {
@@ -34,15 +28,6 @@ public class SrnyxBot extends LazyLibrary {
                 new MessageListener(this),
                 new VoiceListener(this));
         if (!config.advertising.isEmpty()) jda.addEventListener(new AdvertisingListener(this));
-
-        // Get statuses
-        final List<Guild> guilds = jda.getGuilds();
-        final String[] statuses = {"srnyx.com", guilds.size() + " servers", guilds.stream().mapToInt(guild -> guild.loadMembers().get().size()).sum() + " users"};
-        final int length = statuses.length;
-
-        // Set status
-        final Presence presence = jda.getPresence();
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -> presence.setActivity(Activity.watching(statuses[RANDOM.nextInt(length)])), 0, 30, TimeUnit.SECONDS);
 
         // Status log message
         LOGGER.info("srnyx's Bot has finished starting!");
@@ -68,6 +53,15 @@ public class SrnyxBot extends LazyLibrary {
                 .embedDefault(LazyEmbed.Key.COLOR, 3840960)
                 .embedDefault(LazyEmbed.Key.FOOTER_TEXT, "srnyx's Bot")
                 .embedDefault(LazyEmbed.Key.FOOTER_ICON, "https://media.srnyx.com/r/circle.png");
+    }
+
+    @Override
+    public void onReady() {
+        final List<Guild> guilds = jda.getGuilds();
+        settings.activities(
+                Activity.watching("srnyx.com"),
+                Activity.watching(guilds.size() + " servers"),
+                Activity.watching(guilds.stream().mapToInt(guild -> guild.loadMembers().get().size()).sum() + " users"));
     }
 
     public static void main(@NotNull String[] arguments) {
