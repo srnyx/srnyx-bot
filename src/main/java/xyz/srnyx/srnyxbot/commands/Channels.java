@@ -36,7 +36,17 @@ public class Channels extends ApplicationCommand {
             description = "SRNYX | Create a private channel for each person in the server")
     public void channels(@NotNull GuildSlashEvent event,
                          @AppOption(description = "The category to create the channels in (inherits permissions)") @Nullable Category category) {
-        if (!bot.config.checkNotOwner(event)) event.reply(LazyEmoji.WARNING + " Are you sure you want to create a private channel for **EACH** member in this server?")
+        if (bot.config.checkNotOwner(event)) return;
+
+        // Check bot permissions
+        final Member selfMember = event.getGuild().getSelfMember();
+        if (!selfMember.hasPermission(Permission.MANAGE_CHANNEL)) {
+            event.reply(LazyEmoji.NO + " I need the `" + Permission.MANAGE_CHANNEL.getName() + "` permission to do this!").setEphemeral(true).queue();
+            return;
+        }
+
+        // Confirmation
+        event.reply(LazyEmoji.WARNING + " Are you sure you want to create a private channel for **EACH** member in this server?")
                 .setEphemeral(true)
                 .addActionRow(
                         Components.successButton(yes -> {
@@ -46,21 +56,26 @@ public class Channels extends ApplicationCommand {
 
                             // Create channels
                             final Guild guild =  Objects.requireNonNull(yes.getGuild());
-                           guild.loadMembers().onSuccess(members -> {
-                                final long selfId = yes.getJDA().getSelfUser().getIdLong();
-                                for (final Member member : members) {
-                                    final User user = member.getUser();
-                                    if (user.isBot()) continue;
-                                    final long userId = user.getIdLong();
-                                    if (userId != selfId) guild.createTextChannel(user.getName(), category)
-                                            .addMemberPermissionOverride(userId, Permission.VIEW_CHANNEL.getRawValue(), 0)
-                                            .queue();
-                                }
-                                hook.editOriginal("Created private channels for " + members.size() + " members.").queue();
-                            }).onError(error -> hook.editOriginal("Failed to load members: " + error.getMessage()).queue());
+                           guild.loadMembers()
+                                   .onSuccess(members -> {
+                                       int created = 0;
+                                       final long selfId = selfMember.getIdLong();
+                                       for (final Member member : members) {
+                                           final User user = member.getUser();
+                                           if (user.isBot()) continue;
+                                           final long userId = user.getIdLong();
+                                           if (userId == selfId) continue;
+                                           created++;
+                                           guild.createTextChannel(user.getName(), category)
+                                                   .addMemberPermissionOverride(userId, Permission.VIEW_CHANNEL.getRawValue(), 0)
+                                                   .queue();
+                                       }
+                                       hook.editOriginal(LazyEmoji.YES + " Created private channels for **" + created + "** members").setComponents().queue();
+                                    })
+                                   .onError(error -> hook.editOriginal("Failed to load members: " + error.getMessage()).queue());
                         }).build(LazyEmoji.YES_CLEAR.getButtonContent("Yes, create channels")),
                         Components.dangerButton(no -> no.editMessage(LazyEmoji.YES_CLEAR + " Cancelled channel creation").setComponents().queue())
-                                .build(LazyEmoji.NO_CLEAR.getButtonContent("No, cancel")))
+                                .build(LazyEmoji.NO_CLEAR_DARK.getButtonContent("No, cancel")))
                 .queue();
     }
 }
