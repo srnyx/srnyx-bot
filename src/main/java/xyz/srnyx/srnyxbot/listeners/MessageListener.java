@@ -5,51 +5,33 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.entities.emoji.UnicodeEmoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import org.jetbrains.annotations.NotNull;
+
+import xyz.srnyx.javautilities.MapGenerator;
 
 import xyz.srnyx.lazylibrary.LazyListener;
 
 import xyz.srnyx.srnyxbot.SrnyxBot;
 import xyz.srnyx.srnyxbot.CrossChatManager;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 
 public class MessageListener extends LazyListener {
-    private static final Map<String, Emoji> ALPHABET_EMOJIS = new HashMap<>();
-    static  {
-        ALPHABET_EMOJIS.put("a", Emoji.fromUnicode("U+1F1E6"));
-        ALPHABET_EMOJIS.put("b", Emoji.fromUnicode("U+1F1E7"));
-        ALPHABET_EMOJIS.put("c", Emoji.fromUnicode("U+1F1E8"));
-        ALPHABET_EMOJIS.put("d", Emoji.fromUnicode("U+1F1E9"));
-        ALPHABET_EMOJIS.put("e", Emoji.fromUnicode("U+1F1EA"));
-        ALPHABET_EMOJIS.put("f", Emoji.fromUnicode("U+1F1EB"));
-        ALPHABET_EMOJIS.put("g", Emoji.fromUnicode("U+1F1EC"));
-        ALPHABET_EMOJIS.put("h", Emoji.fromUnicode("U+1F1ED"));
-        ALPHABET_EMOJIS.put("i", Emoji.fromUnicode("U+1F1EE"));
-        ALPHABET_EMOJIS.put("j", Emoji.fromUnicode("U+1F1EF"));
-        ALPHABET_EMOJIS.put("k", Emoji.fromUnicode("U+1F1F0"));
-        ALPHABET_EMOJIS.put("l", Emoji.fromUnicode("U+1F1F1"));
-        ALPHABET_EMOJIS.put("m", Emoji.fromUnicode("U+1F1F2"));
-        ALPHABET_EMOJIS.put("n", Emoji.fromUnicode("U+1F1F3"));
-        ALPHABET_EMOJIS.put("o", Emoji.fromUnicode("U+1F1F4"));
-        ALPHABET_EMOJIS.put("p", Emoji.fromUnicode("U+1F1F5"));
-        ALPHABET_EMOJIS.put("q", Emoji.fromUnicode("U+1F1F6"));
-        ALPHABET_EMOJIS.put("r", Emoji.fromUnicode("U+1F1F7"));
-        ALPHABET_EMOJIS.put("s", Emoji.fromUnicode("U+1F1F8"));
-        ALPHABET_EMOJIS.put("t", Emoji.fromUnicode("U+1F1F9"));
-        ALPHABET_EMOJIS.put("u", Emoji.fromUnicode("U+1F1FA"));
-        ALPHABET_EMOJIS.put("v", Emoji.fromUnicode("U+1F1FB"));
-        ALPHABET_EMOJIS.put("w", Emoji.fromUnicode("U+1F1FC"));
-        ALPHABET_EMOJIS.put("x", Emoji.fromUnicode("U+1F1FD"));
-        ALPHABET_EMOJIS.put("y", Emoji.fromUnicode("U+1F1FE"));
-        ALPHABET_EMOJIS.put("z", Emoji.fromUnicode("U+1F1FF"));
-    }
+    @NotNull private static final Map<Character, UnicodeEmoji> ALPHABET_EMOJIS = MapGenerator.HASH_MAP.mapOf(
+            List.of('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'),
+            List.of(Emoji.fromUnicode("U+1F1E6"), Emoji.fromUnicode("U+1F1E7"), Emoji.fromUnicode("U+1F1E8"), Emoji.fromUnicode("U+1F1E9"), Emoji.fromUnicode("U+1F1EA"),
+                    Emoji.fromUnicode("U+1F1EB"), Emoji.fromUnicode("U+1F1EC"), Emoji.fromUnicode("U+1F1ED"), Emoji.fromUnicode("U+1F1EE"), Emoji.fromUnicode("U+1F1EF"),
+                    Emoji.fromUnicode("U+1F1F0"), Emoji.fromUnicode("U+1F1F1"), Emoji.fromUnicode("U+1F1F2"), Emoji.fromUnicode("U+1F1F3"), Emoji.fromUnicode("U+1F1F4"),
+                    Emoji.fromUnicode("U+1F1F5"), Emoji.fromUnicode("U+1F1F6"), Emoji.fromUnicode("U+1F1F7"), Emoji.fromUnicode("U+1F1F8"), Emoji.fromUnicode("U+1F1F9"),
+                    Emoji.fromUnicode("U+1F1FA"), Emoji.fromUnicode("U+1F1FB"), Emoji.fromUnicode("U+1F1FC"), Emoji.fromUnicode("U+1F1FD"), Emoji.fromUnicode("U+1F1FE"),
+                    Emoji.fromUnicode("U+1F1FF")));
+    @NotNull private static final String REACT_TRIGGER = "react";
+    @NotNull private static final Set<String> REACT_IGNORED = Set.of("reaction", "reactivate");
+    private static final int REACT_TRIGGER_LENGTH = REACT_TRIGGER.length();
 
     @NotNull private final SrnyxBot bot;
 
@@ -77,17 +59,20 @@ public class MessageListener extends LazyListener {
         if (member == null) return;
         final Message message = event.getMessage();
 
-        // "react" trigger
+        // Reactions
         if (member.hasPermission(Permission.MESSAGE_MANAGE, Permission.MESSAGE_ADD_REACTION)) {
             final String[] words = message.getContentRaw().split(" ");
             final String lastWord = words[words.length - 1];
-            if (lastWord.startsWith("react") && !lastWord.startsWith("reaction") && lastWord.length() > 5) Arrays.stream(lastWord.substring(5).split(""))
-                    .map(ALPHABET_EMOJIS::get)
-                    .filter(Objects::nonNull)
-                    .forEach(emoji -> message.addReaction(emoji).queue());
+            if (lastWord.startsWith(REACT_TRIGGER) && lastWord.length() > REACT_TRIGGER_LENGTH && !REACT_IGNORED.contains(lastWord)) {
+                for (final char character : lastWord.substring(REACT_TRIGGER_LENGTH).toCharArray()) {
+                    final UnicodeEmoji emoji = ALPHABET_EMOJIS.get(character);
+                    if (emoji != null) message.addReaction(emoji).queue();
+                }
+            }
         }
 
         // Cross-chat
-        if (!event.getAuthor().isBot()) new CrossChatManager(bot, message);
+        final User author = event.getAuthor();
+        if (!author.isBot() && !author.isSystem()) new CrossChatManager(bot, message);
     }
 }
