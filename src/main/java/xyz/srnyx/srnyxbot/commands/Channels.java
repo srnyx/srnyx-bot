@@ -11,6 +11,9 @@ import com.freya02.botcommands.api.application.slash.annotations.JDASlashCommand
 import com.freya02.botcommands.api.components.Components;
 
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 
@@ -42,10 +45,17 @@ public class Channels extends ApplicationCommand {
                             final InteractionHook hook = yes.getHook();
 
                             // Create channels
-                            Objects.requireNonNull(yes.getGuild()).loadMembers().onSuccess(members -> {
-                                members.forEach(member -> member.getGuild().createTextChannel(member.getUser().getName(), category)
-                                        .addMemberPermissionOverride(member.getIdLong(), Permission.VIEW_CHANNEL.getRawValue(), 0)
-                                        .queue());
+                            final Guild guild =  Objects.requireNonNull(yes.getGuild());
+                           guild.loadMembers().onSuccess(members -> {
+                                final long selfId = yes.getJDA().getSelfUser().getIdLong();
+                                for (final Member member : members) {
+                                    final User user = member.getUser();
+                                    if (user.isBot()) continue;
+                                    final long userId = user.getIdLong();
+                                    if (userId != selfId) guild.createTextChannel(user.getName(), category)
+                                            .addMemberPermissionOverride(userId, Permission.VIEW_CHANNEL.getRawValue(), 0)
+                                            .queue();
+                                }
                                 hook.editOriginal("Created private channels for " + members.size() + " members.").queue();
                             }).onError(error -> hook.editOriginal("Failed to load members: " + error.getMessage()).queue());
                         }).build(LazyEmoji.YES_CLEAR.getButtonContent("Yes, create channels")),
