@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import xyz.srnyx.lazylibrary.LazyEmoji;
+
 import xyz.srnyx.srnyxbot.SrnyxBot;
 
 import java.util.Objects;
@@ -46,33 +47,46 @@ public class Channels extends ApplicationCommand {
         }
 
         // Confirmation
+        final Long categoryId = category != null ? category.getIdLong() : null;
         event.reply(LazyEmoji.WARNING + " Are you sure you want to create a private channel for **EACH** member in this server?")
                 .setEphemeral(true)
                 .addActionRow(
                         Components.successButton(yes -> {
+                            final Guild guild =  Objects.requireNonNull(yes.getGuild());
+
+                            // Get Category
+                            Category yesCategory = null;
+                            if (categoryId != null) {
+                                yesCategory = guild.getCategoryById(categoryId);
+                                if (yesCategory == null) {
+                                    yes.editMessage(LazyEmoji.NO + " The specified category no longer exists!").setComponents().queue();
+                                    return;
+                                }
+                            }
+                            final Category finalYesCategory = yesCategory;
+
                             // Defer edit
                             yes.deferEdit().queue();
                             final InteractionHook hook = yes.getHook();
 
                             // Create channels
-                            final Guild guild =  Objects.requireNonNull(yes.getGuild());
-                           guild.loadMembers()
-                                   .onSuccess(members -> {
-                                       int created = 0;
-                                       final long selfId = selfMember.getIdLong();
-                                       for (final Member member : members) {
-                                           final User user = member.getUser();
-                                           if (user.isBot()) continue;
-                                           final long userId = user.getIdLong();
-                                           if (userId == selfId) continue;
-                                           created++;
-                                           guild.createTextChannel(user.getName(), category)
-                                                   .addMemberPermissionOverride(userId, Permission.VIEW_CHANNEL.getRawValue(), 0)
-                                                   .queue();
-                                       }
-                                       hook.editOriginal(LazyEmoji.YES + " Created private channels for **" + created + "** members").setComponents().queue();
+                            guild.loadMembers()
+                                    .onSuccess(members -> {
+                                        int created = 0;
+                                        final long selfId = selfMember.getIdLong();
+                                        for (final Member member : members) {
+                                            final User user = member.getUser();
+                                            if (user.isBot()) continue;
+                                            final long userId = user.getIdLong();
+                                            if (userId == selfId) continue;
+                                            created++;
+                                            guild.createTextChannel(user.getName(), finalYesCategory)
+                                                    .addMemberPermissionOverride(userId, Permission.VIEW_CHANNEL.getRawValue(), 0)
+                                                    .queue();
+                                        }
+                                        hook.editOriginal(LazyEmoji.YES + " Created private channels for **" + created + "** members").setComponents().queue();
                                     })
-                                   .onError(error -> hook.editOriginal("Failed to load members: " + error.getMessage()).queue());
+                                    .onError(error -> hook.editOriginal("Failed to load members: " + error.getMessage()).queue());
                         }).build(LazyEmoji.YES_CLEAR.getButtonContent("Yes, create channels")),
                         Components.dangerButton(no -> no.editMessage(LazyEmoji.YES_CLEAR + " Cancelled channel creation").setComponents().queue())
                                 .build(LazyEmoji.NO_CLEAR_DARK.getButtonContent("No, cancel")))
