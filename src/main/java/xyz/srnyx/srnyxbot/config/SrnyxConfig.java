@@ -1,5 +1,7 @@
 package xyz.srnyx.srnyxbot.config;
 
+import io.github.freya022.botcommands.api.core.service.annotations.BService;
+
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
@@ -12,6 +14,7 @@ import org.spongepowered.configurate.ConfigurationNode;
 import xyz.srnyx.javautilities.manipulation.Mapper;
 
 import xyz.srnyx.lazylibrary.LazyEmbed;
+import xyz.srnyx.lazylibrary.LazyLibrary;
 import xyz.srnyx.lazylibrary.config.LazyRole;
 
 import xyz.srnyx.srnyxbot.SrnyxBot;
@@ -20,6 +23,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 
+@BService
 public class SrnyxConfig {
     @NotNull private final SrnyxBot bot;
 
@@ -44,7 +48,7 @@ public class SrnyxConfig {
 
     public SrnyxConfig(@NotNull SrnyxBot bot) {
         this.bot = bot;
-        final ConfigurationNode yaml = bot.settings.fileSettings.file.yaml;
+        final ConfigurationNode yaml = LazyLibrary.INSTANCE.fileSettings.file.yaml;
 
         playHosting = new PlayHosting(yaml.node("play-hosting"));
 
@@ -114,8 +118,8 @@ public class SrnyxConfig {
     }
 
     public boolean checkNotOwner(@NotNull IReplyCallback event) {
-        final boolean notOwner = !bot.isOwner(event.getUser().getIdLong());
-        if (notOwner) event.replyEmbeds(LazyEmbed.noPermission().build(bot)).setEphemeral(true).queue();
+        final boolean notOwner = !LazyLibrary.INSTANCE.isOwner(event.getUser().getIdLong());
+        if (notOwner) event.replyEmbeds(LazyEmbed.noPermission().build()).setEphemeral(true).queue();
         return notOwner;
     }
 
@@ -127,7 +131,7 @@ public class SrnyxConfig {
         public PlayHosting(@NotNull ConfigurationNode node) {
             this.token = node.node("token").getString();
             this.guildId = node.node("guild").getLong();
-            this.support = new LazyRole(bot, this, node.node("support"));
+            this.support = new LazyRole(this, node.node("support"));
         }
 
         @Override @NotNull
@@ -144,7 +148,7 @@ public class SrnyxConfig {
         public Advertising(long guildId, @NotNull ConfigurationNode node) {
             this.guildId = guildId;
             this.invite = ".gg/" + Objects.requireNonNull(node.node("invite").getString());
-            this.role = new LazyRole(bot, this, node.node("role"));
+            this.role = new LazyRole(this, node.node("role"));
         }
 
         @Override @NotNull

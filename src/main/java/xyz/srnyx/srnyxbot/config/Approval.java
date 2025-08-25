@@ -11,10 +11,6 @@ import java.util.Optional;
 
 
 public record Approval(@NotNull JDA jda, long guildId, long roleId, long channelId) {
-    public boolean isNull() {
-        return getRole().isEmpty() || getChannel().isEmpty();
-    }
-
     @NotNull
     public Optional<Guild> getGuild() {
         return Optional.ofNullable(jda.getGuildById(guildId));

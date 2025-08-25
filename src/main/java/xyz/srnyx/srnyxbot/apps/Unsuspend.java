@@ -1,14 +1,14 @@
 package xyz.srnyx.srnyxbot.apps;
 
-import com.freya02.botcommands.api.annotations.CommandMarker;
-import com.freya02.botcommands.api.annotations.Dependency;
-import com.freya02.botcommands.api.application.ApplicationCommand;
-import com.freya02.botcommands.api.application.context.annotations.JDAMessageCommand;
-import com.freya02.botcommands.api.application.context.message.GuildMessageEvent;
-import com.freya02.botcommands.api.components.Components;
-import com.freya02.botcommands.api.components.InteractionConstraints;
-
 import com.google.gson.JsonObject;
+
+import io.github.freya022.botcommands.api.commands.annotations.Command;
+import io.github.freya022.botcommands.api.commands.application.ApplicationCommand;
+import io.github.freya022.botcommands.api.commands.application.CommandScope;
+import io.github.freya022.botcommands.api.commands.application.context.annotations.JDAMessageCommand;
+import io.github.freya022.botcommands.api.commands.application.context.message.GuildMessageEvent;
+import io.github.freya022.botcommands.api.components.Buttons;
+import io.github.freya022.botcommands.api.components.data.InteractionConstraints;
 
 import net.dv8tion.jda.api.interactions.InteractionHook;
 
@@ -18,7 +18,7 @@ import xyz.srnyx.javautilities.HttpUtility;
 
 import xyz.srnyx.lazylibrary.LazyEmoji;
 
-import xyz.srnyx.srnyxbot.SrnyxBot;
+import xyz.srnyx.srnyxbot.config.SrnyxConfig;
 
 import java.net.HttpURLConnection;
 import java.time.OffsetDateTime;
@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 
-@CommandMarker
+@Command
 public class Unsuspend extends ApplicationCommand {
     @NotNull private static final String USER_AGENT = "srnyx's Bot";
     @NotNull private static final String URL = "https://panel.play.hosting/api";
@@ -35,17 +35,24 @@ public class Unsuspend extends ApplicationCommand {
         HttpUtility.DEBUG = true;
     }
 
-    @Dependency private SrnyxBot bot;
+    @NotNull private final SrnyxConfig config;
+    @NotNull private final Buttons buttons;
+
+    public Unsuspend(@NotNull SrnyxConfig config, @NotNull Buttons buttons) {
+        this.config = config;
+        this.buttons = buttons;
+    }
 
     @JDAMessageCommand(
+            scope = CommandScope.GUILD,
             name = "Unsuspend server",
             defaultLocked = true)
     public void unsuspend(@NotNull GuildMessageEvent event) {
         // Check if support
-        if (bot.config.playHosting.support.checkDontHaveRole(event)) return;
+        if (config.playHosting.support.checkDontHaveRole(event)) return;
 
         // Check if token is set
-        if (bot.config.playHosting.token == null || bot.config.playHosting.token.isBlank()) {
+        if (config.playHosting.token == null || config.playHosting.token.isBlank()) {
             event.reply(LazyEmoji.NO + " **Play Hosting token is not set!** Please set it in the config...").setEphemeral(true).queue();
             return;
         }
@@ -95,10 +102,10 @@ public class Unsuspend extends ApplicationCommand {
         final OffsetDateTime twoHoursAgo = OffsetDateTime.now().minusHours(2);
         if (lastUpdated.isAfter(twoHoursAgo)) {
             hook.editOriginal(LazyEmoji.NO + " **Server with ID `" + id + "` was updated recently!** As instructed in <#1332833015025500202>, please wait 2+ hours before opening a stuck ticket...")
-                    .setActionRow(Components.secondaryButton(bypass -> bypass.deferEdit()
-                                    .queue(bypassHook -> unsuspend(bypassHook, id, applicationServerUrl)))
-                            .setConstraints(InteractionConstraints.ofRoleIds(bot.config.playHosting.support.id))
-                            .build("Unsuspend anyways"))
+                    .setActionRow(buttons.secondary("Unsuspend anyways", LazyEmoji.WARNING.emoji).ephemeral()
+                            .bindTo(bypass -> bypass.deferEdit().queue(bypassHook -> unsuspend(bypassHook, id, applicationServerUrl)))
+                            .constraints(InteractionConstraints.ofRoleIds(config.playHosting.support.id))
+                            .build())
                     .queue();
             return;
         }
@@ -110,14 +117,14 @@ public class Unsuspend extends ApplicationCommand {
     @NotNull
     private Consumer<HttpURLConnection> getConnectionConsumer() {
         return connection -> {
-            connection.setRequestProperty("Authorization", "Bearer " + bot.config.playHosting.token);
+            connection.setRequestProperty("Authorization", "Bearer " + config.playHosting.token);
             connection.setRequestProperty("Accept", "application/json");
         };
     }
 
     private void unsuspend(@NotNull InteractionHook hook, @NotNull String id, @NotNull String applicationServerUrl) {
         // Try to unsuspend server
-        final HttpUtility.Response response = HttpUtility.postJson(USER_AGENT, applicationServerUrl + "/unsuspend", null, getConnectionConsumer());
+        final HttpUtility.Response response = HttpUtility.postJson(USER_AGENT, applicationServerUrl + "/unsuspend", null, getConnectionConsumer()).orElse(null);
         if (response == null) {
             hook.editOriginal(LazyEmoji.NO + " **Failed to unsuspend server with ID `" + id + "`!** Contact <@242385234992037888> so he can check the console")
                     .setComponents()

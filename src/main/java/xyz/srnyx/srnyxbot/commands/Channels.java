@@ -1,14 +1,14 @@
 package xyz.srnyx.srnyxbot.commands;
 
-import com.freya02.botcommands.api.annotations.CommandMarker;
-import com.freya02.botcommands.api.annotations.Dependency;
-import com.freya02.botcommands.api.annotations.UserPermissions;
-import com.freya02.botcommands.api.application.ApplicationCommand;
-import com.freya02.botcommands.api.application.CommandScope;
-import com.freya02.botcommands.api.application.annotations.AppOption;
-import com.freya02.botcommands.api.application.slash.GuildSlashEvent;
-import com.freya02.botcommands.api.application.slash.annotations.JDASlashCommand;
-import com.freya02.botcommands.api.components.Components;
+import io.github.freya022.botcommands.api.commands.annotations.Command;
+import io.github.freya022.botcommands.api.commands.annotations.UserPermissions;
+import io.github.freya022.botcommands.api.commands.application.ApplicationCommand;
+import io.github.freya022.botcommands.api.commands.application.CommandScope;
+import io.github.freya022.botcommands.api.commands.application.slash.GuildSlashEvent;
+import io.github.freya022.botcommands.api.commands.application.slash.annotations.JDASlashCommand;
+import io.github.freya022.botcommands.api.commands.application.slash.annotations.SlashOption;
+import io.github.freya022.botcommands.api.commands.application.slash.annotations.TopLevelSlashCommandData;
+import io.github.freya022.botcommands.api.components.Buttons;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -22,22 +22,29 @@ import org.jetbrains.annotations.Nullable;
 
 import xyz.srnyx.lazylibrary.LazyEmoji;
 
-import xyz.srnyx.srnyxbot.SrnyxBot;
+import xyz.srnyx.srnyxbot.config.SrnyxConfig;
 
 import java.util.Objects;
 
 
-@CommandMarker @UserPermissions(Permission.ADMINISTRATOR)
+@Command
 public class Channels extends ApplicationCommand {
-    @Dependency private SrnyxBot bot;
+    @NotNull private final SrnyxConfig config;
+    @NotNull private final Buttons buttons;
 
+    public Channels(@NotNull SrnyxConfig config, @NotNull Buttons buttons) {
+        this.config = config;
+        this.buttons = buttons;
+    }
+
+    @UserPermissions(Permission.ADMINISTRATOR)
+    @TopLevelSlashCommandData(scope = CommandScope.GUILD)
     @JDASlashCommand(
-            scope = CommandScope.GUILD,
             name = "channels",
             description = "SRNYX | Create a private channel for each person in the server")
     public void channels(@NotNull GuildSlashEvent event,
-                         @AppOption(description = "The category to create the channels in (inherits permissions)") @Nullable Category category) {
-        if (bot.config.checkNotOwner(event)) return;
+                         @SlashOption(description = "The category to create the channels in (inherits permissions)") @Nullable Category category) {
+        if (config.checkNotOwner(event)) return;
 
         // Check bot permissions
         final Member selfMember = event.getGuild().getSelfMember();
@@ -51,7 +58,7 @@ public class Channels extends ApplicationCommand {
         event.reply(LazyEmoji.WARNING + " Are you sure you want to create a private channel for **EACH** member in this server?")
                 .setEphemeral(true)
                 .addActionRow(
-                        Components.successButton(yes -> {
+                        buttons.success("Yes, create channels", LazyEmoji.YES_CLEAR.emoji).ephemeral().bindTo(yes -> {
                             final Guild guild =  Objects.requireNonNull(yes.getGuild());
 
                             // Get Category
@@ -87,9 +94,10 @@ public class Channels extends ApplicationCommand {
                                         hook.editOriginal(LazyEmoji.YES + " Created private channels for **" + created + "** members").setComponents().queue();
                                     })
                                     .onError(error -> hook.editOriginal("Failed to load members: " + error.getMessage()).queue());
-                        }).build(LazyEmoji.YES_CLEAR.getButtonContent("Yes, create channels")),
-                        Components.dangerButton(no -> no.editMessage(LazyEmoji.YES_CLEAR + " Cancelled channel creation").setComponents().queue())
-                                .build(LazyEmoji.NO_CLEAR_DARK.getButtonContent("No, cancel")))
+                        }).build(),
+                        buttons.danger("No, cancel", LazyEmoji.NO_CLEAR_DARK.emoji).ephemeral()
+                                .bindTo(no -> no.editMessage(LazyEmoji.YES_CLEAR + " Cancelled channel creation").setComponents().queue())
+                                .build())
                 .queue();
     }
 }

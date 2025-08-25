@@ -11,7 +11,7 @@ import xyz.srnyx.lazylibrary.LazyListener;
 import xyz.srnyx.lazylibrary.events.GuildVoiceJoinEvent;
 import xyz.srnyx.lazylibrary.events.GuildVoiceLeaveEvent;
 
-import xyz.srnyx.srnyxbot.SrnyxBot;
+import xyz.srnyx.srnyxbot.config.SrnyxConfig;
 
 import java.util.List;
 import java.util.TimerTask;
@@ -20,13 +20,14 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
+//@BService
 public class VoiceListener extends LazyListener {
     @NotNull public static final ScheduledExecutorService EXECUTOR = Executors.newScheduledThreadPool(1);
 
-    @NotNull private final SrnyxBot bot;
+    @NotNull private final SrnyxConfig config;
 
-    public VoiceListener(@NotNull SrnyxBot bot) {
-        this.bot = bot;
+    public VoiceListener(@NotNull SrnyxConfig config) {
+        this.config = config;
     }
 
     /**
@@ -50,8 +51,8 @@ public class VoiceListener extends LazyListener {
      */
     public void move(@NotNull AudioChannelUnion channel) {
         final long id = channel.getIdLong();
-        final boolean isFriendsVc = id == bot.config.friendsVc;
-        if (!isFriendsVc && id != bot.config.friendsWaiting) return;
+        final boolean isFriendsVc = id == config.friendsVc;
+        if (!isFriendsVc && id != config.friendsWaiting) return;
         final Guild guild = channel.getGuild();
 
         EXECUTOR.schedule(new TimerTask() {
@@ -64,10 +65,10 @@ public class VoiceListener extends LazyListener {
                 long moveTo;
                 if (isFriendsVc) {
                     if (size >= 2) return;
-                    moveTo = bot.config.friendsWaiting;
+                    moveTo = config.friendsWaiting;
                 } else {
                     if (size < 2) return;
-                    moveTo = bot.config.friendsVc;
+                    moveTo = config.friendsVc;
                 }
 
                 final AudioChannel moveToChannel = guild.getChannelById(AudioChannel.class, moveTo);

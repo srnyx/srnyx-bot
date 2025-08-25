@@ -1,11 +1,9 @@
 package xyz.srnyx.srnyxbot.components;
 
-import com.freya02.botcommands.api.annotations.CommandMarker;
-import com.freya02.botcommands.api.annotations.Dependency;
-import com.freya02.botcommands.api.application.ApplicationCommand;
-import com.freya02.botcommands.api.components.Components;
-import com.freya02.botcommands.api.components.annotations.JDAButtonListener;
-import com.freya02.botcommands.api.components.event.ButtonEvent;
+import io.github.freya022.botcommands.api.components.Buttons;
+import io.github.freya022.botcommands.api.components.annotations.JDAButtonListener;
+import io.github.freya022.botcommands.api.components.event.ButtonEvent;
+import io.github.freya022.botcommands.api.core.annotations.Handler;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -18,30 +16,28 @@ import org.jetbrains.annotations.NotNull;
 import xyz.srnyx.lazylibrary.LazyEmbed;
 import xyz.srnyx.lazylibrary.LazyEmoji;
 
-import xyz.srnyx.srnyxbot.SrnyxBot;
 import xyz.srnyx.srnyxbot.config.Approval;
+import xyz.srnyx.srnyxbot.config.SrnyxConfig;
 
 import java.util.Optional;
 
 
-@CommandMarker
-public class ApprovalButtons extends ApplicationCommand {
+@Handler
+public record ApprovalButtons(@NotNull SrnyxConfig config, @NotNull Buttons buttons) {
     @NotNull public static final String APPROVAL_BUTTON_YES = "approval_button_yes";
     @NotNull public static final String APPROVAL_BUTTON_NO = "approval_button_no";
 
-    @Dependency private SrnyxBot bot;
-
-    @JDAButtonListener(name = APPROVAL_BUTTON_YES)
+    @JDAButtonListener(APPROVAL_BUTTON_YES)
     public void onApprovalButtonYes(@NotNull ButtonEvent event) {
         // Check permissions
         final Member clicker = event.getMember();
         if (clicker == null || !clicker.hasPermission(Permission.MANAGE_ROLES)) {
-            event.replyEmbeds(LazyEmbed.noPermission().build(bot)).setEphemeral(true).queue();
+            event.replyEmbeds(LazyEmbed.noPermission().build()).setEphemeral(true).queue();
             return;
         }
 
         // Get role
-        final Optional<Role> role = bot.config.getApprovalFromChannel(event.getChannel().getIdLong()).flatMap(Approval::getRole);
+        final Optional<Role> role = config.getApprovalFromChannel(event.getChannel().getIdLong()).flatMap(Approval::getRole);
         if (role.isEmpty()) {
             event.reply(LazyEmoji.NO + " This is not an approval channel!").setEphemeral(true).queue();
             return;
@@ -51,18 +47,22 @@ public class ApprovalButtons extends ApplicationCommand {
         final Guild guild = clicker.getGuild();
         final String content = event.getMessage().getContentRaw();
         event.deferEdit()
-                .flatMap(hook -> hook.editOriginalComponents(ActionRow.of(Components.successButton(APPROVAL_BUTTON_YES).build(LazyEmoji.YES_CLEAR.getButtonContent("Approved!")).asDisabled())))
-                .flatMap(msg -> guild.retrieveMemberById(content.replace("<@", "").replace(">", "")))
+                .flatMap(hook -> hook.editOriginalComponents(ActionRow.of(
+                        buttons.success("Approved!", LazyEmoji.YES_CLEAR.emoji)
+                                .persistent()
+                                .bindTo(APPROVAL_BUTTON_YES)
+                                .build().asDisabled())))
+                .flatMap(_ -> guild.retrieveMemberById(content.replace("<@", "").replace(">", "")))
                 .flatMap(member -> guild.addRoleToMember(member, role.get()).reason("Approval accepted by " + clicker.getUser().getName()))
-                .queue(s -> {}, f -> {});
+                .queue();
     }
 
-    @JDAButtonListener(name = APPROVAL_BUTTON_NO)
+    @JDAButtonListener(APPROVAL_BUTTON_NO)
     public void onApprovalButtonNo(@NotNull ButtonEvent event) {
         // Check permissions
         final Member clicker = event.getMember();
         if (clicker == null || !clicker.hasPermission(Permission.MANAGE_ROLES)) {
-            event.replyEmbeds(LazyEmbed.noPermission().build(bot)).setEphemeral(true).queue();
+            event.replyEmbeds(LazyEmbed.noPermission().build()).setEphemeral(true).queue();
             return;
         }
 
@@ -70,9 +70,13 @@ public class ApprovalButtons extends ApplicationCommand {
         final Guild guild = clicker.getGuild();
         final String content = event.getMessage().getContentRaw();
         event.deferEdit()
-                .flatMap(hook -> hook.editOriginalComponents(ActionRow.of(Components.dangerButton(APPROVAL_BUTTON_NO).build(LazyEmoji.NO_CLEAR_DARK.getButtonContent("Denied!")).asDisabled())))
-                .flatMap(msg -> guild.retrieveMemberById(content.replace("<@", "").replace(">", "")))
+                .flatMap(hook -> hook.editOriginalComponents(ActionRow.of(
+                        buttons.danger("Denied!", LazyEmoji.NO_CLEAR_DARK.emoji)
+                                .persistent()
+                                .bindTo(APPROVAL_BUTTON_NO)
+                                .build().asDisabled())))
+                .flatMap(_ -> guild.retrieveMemberById(content.replace("<@", "").replace(">", "")))
                 .flatMap(member -> guild.kick(member).reason("Approval denied by " + clicker.getUser().getName()))
-                .queue(s -> {}, f -> {});
+                .queue();
     }
 }

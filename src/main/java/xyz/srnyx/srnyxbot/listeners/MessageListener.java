@@ -1,9 +1,10 @@
 package xyz.srnyx.srnyxbot.listeners;
 
+import io.github.freya022.botcommands.api.core.annotations.BEventListener;
+import io.github.freya022.botcommands.api.core.service.annotations.BService;
+
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.UnicodeEmoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -12,15 +13,14 @@ import org.jetbrains.annotations.NotNull;
 
 import xyz.srnyx.javautilities.MapGenerator;
 
-import xyz.srnyx.lazylibrary.LazyListener;
-
-import xyz.srnyx.srnyxbot.SrnyxBot;
 import xyz.srnyx.srnyxbot.CrossChatManager;
+import xyz.srnyx.srnyxbot.config.SrnyxConfig;
 
 import java.util.*;
 
 
-public class MessageListener extends LazyListener {
+@BService
+public record MessageListener(@NotNull SrnyxConfig config) {
     @NotNull private static final Map<Character, UnicodeEmoji> ALPHABET_EMOJIS = MapGenerator.HASH_MAP.mapOf(
             List.of('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'),
             List.of(Emoji.fromUnicode("U+1F1E6"), Emoji.fromUnicode("U+1F1E7"), Emoji.fromUnicode("U+1F1E8"), Emoji.fromUnicode("U+1F1E9"), Emoji.fromUnicode("U+1F1EA"),
@@ -30,30 +30,10 @@ public class MessageListener extends LazyListener {
                     Emoji.fromUnicode("U+1F1FA"), Emoji.fromUnicode("U+1F1FB"), Emoji.fromUnicode("U+1F1FC"), Emoji.fromUnicode("U+1F1FD"), Emoji.fromUnicode("U+1F1FE"),
                     Emoji.fromUnicode("U+1F1FF")));
     @NotNull private static final String REACT_TRIGGER = "react";
-    @NotNull private static final Set<String> REACT_IGNORED = Set.of("reaction", "reactivate");
+    @NotNull private static final Set<String> REACT_IGNORED = Set.of("reaction", "reactions", "reactivate");
     private static final int REACT_TRIGGER_LENGTH = REACT_TRIGGER.length();
 
-    @NotNull private final SrnyxBot bot;
-
-    public MessageListener(@NotNull SrnyxBot bot) {
-        this.bot = bot;
-    }
-
-    /**
-     * Indicates that a Message was received in a {@link net.dv8tion.jda.api.entities.channel.middleman.MessageChannel MessageChannel}.
-     * <br>This includes {@link TextChannel TextChannel} and {@link PrivateChannel PrivateChannel}!
-     *
-     * <p>Can be used to detect that a Message is received in either a guild- or private channel. Providing a MessageChannel and Message.
-     *
-     * <p><b>Requirements</b><br>
-     *
-     * <p>This event requires at least one of the following intents (Will not fire at all if neither is enabled):
-     * <ul>
-     *     <li>{@link net.dv8tion.jda.api.requests.GatewayIntent#GUILD_MESSAGES GUILD_MESSAGES} to work in guild text channels</li>
-     *     <li>{@link net.dv8tion.jda.api.requests.GatewayIntent#DIRECT_MESSAGES DIRECT_MESSAGES} to work in private channels</li>
-     * </ul>
-     */
-    @Override
+    @BEventListener
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         final Member member = event.getMember();
         if (member == null) return;
@@ -73,6 +53,6 @@ public class MessageListener extends LazyListener {
 
         // Cross-chat
         final User author = event.getAuthor();
-        if (!author.isBot() && !author.isSystem()) new CrossChatManager(bot, message);
+        if (!author.isBot() && !author.isSystem()) new CrossChatManager(config, message);
     }
 }

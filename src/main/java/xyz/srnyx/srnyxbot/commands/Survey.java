@@ -1,11 +1,12 @@
 package xyz.srnyx.srnyxbot.commands;
 
-import com.freya02.botcommands.api.annotations.CommandMarker;
-import com.freya02.botcommands.api.annotations.Dependency;
-import com.freya02.botcommands.api.application.ApplicationCommand;
-import com.freya02.botcommands.api.application.annotations.AppOption;
-import com.freya02.botcommands.api.application.slash.GuildSlashEvent;
-import com.freya02.botcommands.api.application.slash.annotations.JDASlashCommand;
+import io.github.freya022.botcommands.api.commands.annotations.Command;
+import io.github.freya022.botcommands.api.commands.application.ApplicationCommand;
+import io.github.freya022.botcommands.api.commands.application.CommandScope;
+import io.github.freya022.botcommands.api.commands.application.slash.GuildSlashEvent;
+import io.github.freya022.botcommands.api.commands.application.slash.annotations.JDASlashCommand;
+import io.github.freya022.botcommands.api.commands.application.slash.annotations.SlashOption;
+import io.github.freya022.botcommands.api.commands.application.slash.annotations.TopLevelSlashCommandData;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -16,24 +17,30 @@ import org.jetbrains.annotations.NotNull;
 
 import xyz.srnyx.lazylibrary.LazyEmoji;
 
-import xyz.srnyx.srnyxbot.SrnyxBot;
+import xyz.srnyx.srnyxbot.config.SrnyxConfig;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 
-@CommandMarker
+@Command
 public class Survey extends ApplicationCommand {
-    @Dependency private SrnyxBot bot;
+    @NotNull private final SrnyxConfig config;
 
+    public Survey(@NotNull SrnyxConfig config) {
+        this.config = config;
+    }
+
+    @TopLevelSlashCommandData(
+            scope = CommandScope.GUILD,
+            defaultLocked = true)
     @JDASlashCommand(
             name = "survey",
-            description = "CG | Add survey role to specified users",
-            defaultLocked = true)
+            description = "CG | Add survey role to specified users")
     public void surveyCommand(@NotNull GuildSlashEvent event,
-                              @AppOption(description = "The users to add the role to (separate using '=:=')") @NotNull String users) {
-        if (bot.config.checkNotOwner(event)) return;
+                              @SlashOption(description = "The users to add the role to (separate using '=:=')") @NotNull String users) {
+        if (config.checkNotOwner(event)) return;
         final Guild guild = event.getGuild();
         if (guild.getIdLong() != 617280459717476353L) {
             event.reply(LazyEmoji.NO + " This command is only available in **CommandGeek Labs**").setEphemeral(true).queue();

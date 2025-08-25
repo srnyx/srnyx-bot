@@ -9,6 +9,8 @@ import net.dv8tion.jda.api.utils.FileUpload;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import xyz.srnyx.srnyxbot.config.SrnyxConfig;
+
 import java.util.Collections;
 
 
@@ -20,16 +22,16 @@ public class CrossChatManager {
      *
      * @param   message Message to send
      */
-    public CrossChatManager(@NotNull SrnyxBot bot, @NotNull Message message) {
+    public CrossChatManager(@NotNull SrnyxConfig config, @NotNull Message message) {
         this.message = message;
         final long channel = message.getChannel().getIdLong();
 
-        if (channel == bot.config.crosschatTwoChannel) {
-            bot.config.getCrosschatOneChannel().ifPresent(this::send);
+        if (channel == config.crosschatTwoChannel) {
+            config.getCrosschatOneChannel().ifPresent(this::send);
             return;
         }
 
-        if (channel == bot.config.crosschatOneChannel) bot.config.getCrosschatTwoChannel().ifPresent(this::send);
+        if (channel == config.crosschatOneChannel) config.getCrosschatTwoChannel().ifPresent(this::send);
     }
 
     /**
