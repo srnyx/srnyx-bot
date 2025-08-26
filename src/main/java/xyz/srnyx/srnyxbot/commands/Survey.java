@@ -9,8 +9,8 @@ import io.github.freya022.botcommands.api.commands.application.slash.annotations
 import io.github.freya022.botcommands.api.commands.application.slash.annotations.TopLevelSlashCommandData;
 
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 
 import org.jetbrains.annotations.NotNull;
@@ -53,10 +53,10 @@ public class Survey extends ApplicationCommand {
         // Give role to users
         final List<String> failed = new ArrayList<>();
         for (final String string : users.split("=:=")) {
-            // Get Member
-            Member member;
+            // Get snowflake
+            UserSnowflake member;
             try {
-                member = guild.retrieveMemberById(Long.parseLong(string)).complete();
+                member = UserSnowflake.fromId(string);
             } catch (final NumberFormatException | ErrorResponseException e) {
                 try {
                     member = guild.getMembersByName(string, false).getFirst();

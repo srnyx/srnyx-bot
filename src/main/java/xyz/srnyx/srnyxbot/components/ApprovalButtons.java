@@ -6,9 +6,9 @@ import io.github.freya022.botcommands.api.components.event.ButtonEvent;
 import io.github.freya022.botcommands.api.core.annotations.Handler;
 
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 
 import org.jetbrains.annotations.NotNull;
@@ -43,17 +43,17 @@ public record ApprovalButtons(@NotNull SrnyxConfig config, @NotNull Buttons butt
             return;
         }
 
-        // Add role and edit message
-        final Guild guild = clicker.getGuild();
+        // Edit message
+        event.editComponents(ActionRow.of(buttons.success("Approved!", LazyEmoji.YES_CLEAR.emoji)
+                        .persistent()
+                        .bindTo(APPROVAL_BUTTON_YES)
+                        .build().asDisabled()))
+                .queue();
+
+        // Add role
         final String content = event.getMessage().getContentRaw();
-        event.deferEdit()
-                .flatMap(hook -> hook.editOriginalComponents(ActionRow.of(
-                        buttons.success("Approved!", LazyEmoji.YES_CLEAR.emoji)
-                                .persistent()
-                                .bindTo(APPROVAL_BUTTON_YES)
-                                .build().asDisabled())))
-                .flatMap(_ -> guild.retrieveMemberById(content.replace("<@", "").replace(">", "")))
-                .flatMap(member -> guild.addRoleToMember(member, role.get()).reason("Approval accepted by " + clicker.getUser().getName()))
+        clicker.getGuild().addRoleToMember(UserSnowflake.fromId(content.substring(2, content.length() - 1)), role.get())
+                .reason("Approval accepted by " + clicker.getUser().getName())
                 .queue();
     }
 
@@ -66,17 +66,17 @@ public record ApprovalButtons(@NotNull SrnyxConfig config, @NotNull Buttons butt
             return;
         }
 
-        // Kick member and edit message
-        final Guild guild = clicker.getGuild();
+        // Edit message
+        event.editComponents(ActionRow.of(buttons.danger("Denied!", LazyEmoji.NO_CLEAR_DARK.emoji)
+                        .persistent()
+                        .bindTo(APPROVAL_BUTTON_NO)
+                        .build().asDisabled()))
+                .queue();
+
+        // Kick member
         final String content = event.getMessage().getContentRaw();
-        event.deferEdit()
-                .flatMap(hook -> hook.editOriginalComponents(ActionRow.of(
-                        buttons.danger("Denied!", LazyEmoji.NO_CLEAR_DARK.emoji)
-                                .persistent()
-                                .bindTo(APPROVAL_BUTTON_NO)
-                                .build().asDisabled())))
-                .flatMap(_ -> guild.retrieveMemberById(content.replace("<@", "").replace(">", "")))
-                .flatMap(member -> guild.kick(member).reason("Approval denied by " + clicker.getUser().getName()))
+        clicker.getGuild().kick(UserSnowflake.fromId(content.substring(2, content.length() - 1)))
+                .reason("Approval denied by " + clicker.getUser().getName())
                 .queue();
     }
 }

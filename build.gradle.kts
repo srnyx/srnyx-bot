@@ -12,6 +12,11 @@ plugins {
 lazyLibrary("botcommands-v3-SNAPSHOT")
 setupJda("5.6.1", "xyz.srnyx", "2.0.0", "General purpose bot for srnyx")
 
+//TODO temporary
+configurations.all {
+    resolutionStrategy.cacheDynamicVersionsFor(0, "seconds")
+}
+
 // Fix some tasks
 tasks["distZip"].dependsOn("shadowJar")
 tasks["distTar"].dependsOn("shadowJar")
