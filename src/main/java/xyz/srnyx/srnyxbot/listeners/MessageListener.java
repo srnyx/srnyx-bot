@@ -13,13 +13,13 @@ import org.jetbrains.annotations.NotNull;
 
 import xyz.srnyx.javautilities.MapGenerator;
 
-import xyz.srnyx.srnyxbot.config.SrnyxConfig;
-
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 @BService
-public record MessageListener(@NotNull SrnyxConfig config) {
+public final class MessageListener {
     @NotNull private static final Map<Character, UnicodeEmoji> ALPHABET_EMOJIS = MapGenerator.HASH_MAP.mapOf(
             List.of('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'),
             List.of(Emoji.fromUnicode("U+1F1E6"), Emoji.fromUnicode("U+1F1E7"), Emoji.fromUnicode("U+1F1E8"), Emoji.fromUnicode("U+1F1E9"), Emoji.fromUnicode("U+1F1EA"),

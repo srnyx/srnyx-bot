@@ -16,7 +16,15 @@ import xyz.srnyx.srnyxbot.config.SrnyxConfig;
 
 
 @BService
-public record GuildMemberListener(@NotNull SrnyxConfig config, @NotNull Buttons buttons) {
+public final class GuildMemberListener {
+    private final @NotNull SrnyxConfig config;
+    private final @NotNull Buttons buttons;
+
+    public GuildMemberListener(@NotNull SrnyxConfig config, @NotNull Buttons buttons) {
+        this.config = config;
+        this.buttons = buttons;
+    }
+
     @BEventListener
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
         config.getApprovalFromGuild(event.getGuild().getIdLong())
