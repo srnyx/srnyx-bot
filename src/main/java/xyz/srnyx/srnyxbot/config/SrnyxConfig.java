@@ -3,7 +3,6 @@ package xyz.srnyx.srnyxbot.config;
 import io.github.freya022.botcommands.api.core.service.annotations.BService;
 
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 
 import org.jetbrains.annotations.NotNull;
@@ -35,14 +34,6 @@ public class SrnyxConfig {
     public final long friendsWaiting;
     public final long friendsVc;
 
-    // CROSSCHAT
-    // one
-    public final long crosschatOneGuild;
-    public final long crosschatOneChannel;
-    // two
-    public final long crosschatTwoGuild;
-    public final long crosschatTwoChannel;
-
     // APPROVALS
     @NotNull public final Set<Approval> approvals = new HashSet<>();
 
@@ -65,42 +56,11 @@ public class SrnyxConfig {
         friendsWaiting = friendsNode.node("waiting").getLong();
         friendsVc = friendsNode.node("vc").getLong();
 
-        // CROSSCHAT
-        final ConfigurationNode crosschatNode = yaml.node("crosschat");
-        // one
-        final ConfigurationNode crosschatOne = crosschatNode.node("one");
-        crosschatOneGuild = crosschatOne.node("guild").getLong();
-        crosschatOneChannel = crosschatOne.node("channel").getLong();
-        // two
-        final ConfigurationNode crosschatTwo = crosschatNode.node("two");
-        crosschatTwoGuild = crosschatTwo.node("guild").getLong();
-        crosschatTwoChannel = crosschatTwo.node("channel").getLong();
-
         // APPROVALS
         final ConfigurationNode approvalsNode = yaml.node("approvals");
         for (final ConfigurationNode node : approvalsNode.childrenMap().values()) {
             Mapper.toLong(node.key()).ifPresent(aLong -> approvals.add(new Approval(bot.jda, aLong, node.node("role").getLong(), node.node("channel").getLong())));
         }
-    }
-
-    @NotNull
-    public Optional<Guild> getCrosschatOneGuild() {
-        return Optional.ofNullable(bot.jda.getGuildById(crosschatOneGuild));
-    }
-
-    @NotNull
-    public Optional<TextChannel> getCrosschatOneChannel() {
-        return getCrosschatOneGuild().map(value -> value.getChannelById(TextChannel.class, crosschatOneChannel));
-    }
-
-    @NotNull
-    public Optional<Guild> getCrosschatTwoGuild() {
-        return Optional.ofNullable(bot.jda.getGuildById(crosschatTwoGuild));
-    }
-
-    @NotNull
-    public Optional<TextChannel> getCrosschatTwoChannel() {
-        return getCrosschatTwoGuild().map(value -> value.getChannelById(TextChannel.class, crosschatTwoChannel));
     }
 
     @NotNull

@@ -30,14 +30,6 @@ friends:
   waiting: 977313982320873503
   vc: 960999744753250315
 
-crosschat:
-  one:
-    guild: GUILD_ID_HERE
-    channel: TC_ID_HERE
-  two:
-    guild: GUILD_ID_HERE
-    channel: TC_ID_HERE
-
 approvals:
   1116404689743921243: # OFFICIAL GILDEDGUY FAN CLUB 100% REAL
     role: 1116407759844425908 # fan

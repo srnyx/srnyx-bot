@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 
 import xyz.srnyx.javautilities.MapGenerator;
 
-import xyz.srnyx.srnyxbot.CrossChatManager;
 import xyz.srnyx.srnyxbot.config.SrnyxConfig;
 
 import java.util.*;
@@ -40,19 +39,13 @@ public record MessageListener(@NotNull SrnyxConfig config) {
         final Message message = event.getMessage();
 
         // Reactions
-        if (member.hasPermission(Permission.MESSAGE_MANAGE, Permission.MESSAGE_ADD_REACTION)) {
-            final String[] words = message.getContentRaw().split(" ");
-            final String lastWord = words[words.length - 1];
-            if (lastWord.startsWith(REACT_TRIGGER) && lastWord.length() > REACT_TRIGGER_LENGTH && !REACT_IGNORED.contains(lastWord)) {
-                for (final char character : lastWord.substring(REACT_TRIGGER_LENGTH).toCharArray()) {
-                    final UnicodeEmoji emoji = ALPHABET_EMOJIS.get(character);
-                    if (emoji != null) message.addReaction(emoji).queue();
-                }
-            }
+        if (!member.hasPermission(Permission.MESSAGE_MANAGE, Permission.MESSAGE_ADD_REACTION)) return;
+        final String[] words = message.getContentRaw().split(" ");
+        final String lastWord = words[words.length - 1];
+        if (!lastWord.startsWith(REACT_TRIGGER) || lastWord.length() <= REACT_TRIGGER_LENGTH || REACT_IGNORED.contains(lastWord)) return;
+        for (final char character : lastWord.substring(REACT_TRIGGER_LENGTH).toCharArray()) {
+            final UnicodeEmoji emoji = ALPHABET_EMOJIS.get(character);
+            if (emoji != null) message.addReaction(emoji).queue();
         }
-
-        // Cross-chat
-        final User author = event.getAuthor();
-        if (!author.isBot() && !author.isSystem()) new CrossChatManager(config, message);
     }
 }
