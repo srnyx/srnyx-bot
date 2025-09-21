@@ -10,6 +10,7 @@ import io.github.freya022.botcommands.api.commands.application.context.message.G
 import io.github.freya022.botcommands.api.components.Buttons;
 import io.github.freya022.botcommands.api.components.data.InteractionConstraints;
 
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 
 import org.jetbrains.annotations.NotNull;
@@ -102,10 +103,10 @@ public class Unsuspend extends ApplicationCommand {
         final OffsetDateTime twoHoursAgo = OffsetDateTime.now().minusHours(2);
         if (lastUpdated.isAfter(twoHoursAgo)) {
             hook.editOriginal(LazyEmoji.NO + " **Server with ID `" + id + "` was updated recently!** As instructed in <#1332833015025500202>, please wait 2+ hours before opening a stuck ticket...")
-                    .setActionRow(buttons.secondary("Unsuspend anyways", LazyEmoji.WARNING.emoji).ephemeral()
+                    .setComponents(ActionRow.of(buttons.danger("Unsuspend anyways", LazyEmoji.WARNING_CLEAR.emoji).ephemeral()
                             .bindTo(bypass -> bypass.deferEdit().queue(bypassHook -> unsuspend(bypassHook, id, applicationServerUrl)))
                             .constraints(InteractionConstraints.ofRoleIds(config.playHosting.support.id))
-                            .build())
+                            .build()))
                     .queue();
             return;
         }

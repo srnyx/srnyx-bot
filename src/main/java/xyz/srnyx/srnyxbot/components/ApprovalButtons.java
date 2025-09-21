@@ -6,10 +6,10 @@ import io.github.freya022.botcommands.api.components.event.ButtonEvent;
 import io.github.freya022.botcommands.api.core.annotations.Handler;
 
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.UserSnowflake;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
 
 import org.jetbrains.annotations.NotNull;
 

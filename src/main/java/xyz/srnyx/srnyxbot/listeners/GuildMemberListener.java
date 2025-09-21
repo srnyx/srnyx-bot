@@ -4,6 +4,7 @@ import io.github.freya022.botcommands.api.components.Buttons;
 import io.github.freya022.botcommands.api.core.annotations.BEventListener;
 import io.github.freya022.botcommands.api.core.service.annotations.BService;
 
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 
 import org.jetbrains.annotations.NotNull;
@@ -17,8 +18,8 @@ import xyz.srnyx.srnyxbot.config.SrnyxConfig;
 
 @BService
 public final class GuildMemberListener {
-    private final @NotNull SrnyxConfig config;
-    private final @NotNull Buttons buttons;
+    @NotNull private final SrnyxConfig config;
+    @NotNull private final Buttons buttons;
 
     public GuildMemberListener(@NotNull SrnyxConfig config, @NotNull Buttons buttons) {
         this.config = config;
@@ -31,9 +32,9 @@ public final class GuildMemberListener {
                 .flatMap(Approval::getChannel)
                 .ifPresent(textChannel -> textChannel.sendMessage(event.getUser().getName())
                         .flatMap(message -> message.editMessage(event.getMember().getAsMention())
-                                .setActionRow(
+                                .setComponents(ActionRow.of(
                                         buttons.success("Approve", LazyEmoji.YES_CLEAR.emoji).persistent().bindTo(ApprovalButtons.APPROVAL_BUTTON_YES).build(),
-                                        buttons.danger("Deny", LazyEmoji.NO_CLEAR_DARK.emoji).persistent().bindTo(ApprovalButtons.APPROVAL_BUTTON_NO).build()))
+                                        buttons.danger("Deny", LazyEmoji.NO_CLEAR_DARK.emoji).persistent().bindTo(ApprovalButtons.APPROVAL_BUTTON_NO).build())))
                         .queue());
     }
 }

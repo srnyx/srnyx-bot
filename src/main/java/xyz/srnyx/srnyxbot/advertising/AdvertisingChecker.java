@@ -1,4 +1,4 @@
-package xyz.srnyx.srnyxbot;
+package xyz.srnyx.srnyxbot.advertising;
 
 import io.github.freya022.botcommands.api.core.service.CustomConditionChecker;
 import io.github.freya022.botcommands.api.core.service.ServiceContainer;

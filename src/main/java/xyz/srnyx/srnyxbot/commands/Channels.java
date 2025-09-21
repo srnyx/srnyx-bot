@@ -11,6 +11,7 @@ import io.github.freya022.botcommands.api.commands.application.slash.annotations
 import io.github.freya022.botcommands.api.components.Buttons;
 
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
@@ -57,7 +58,7 @@ public class Channels extends ApplicationCommand {
         final Long categoryId = category != null ? category.getIdLong() : null;
         event.reply(LazyEmoji.WARNING + " Are you sure you want to create a private channel for **EACH** member in this server?")
                 .setEphemeral(true)
-                .addActionRow(
+                .setComponents(ActionRow.of(
                         buttons.success("Yes, create channels", LazyEmoji.YES_CLEAR.emoji).ephemeral().bindTo(yes -> {
                             final Guild guild =  Objects.requireNonNull(yes.getGuild());
 
@@ -97,7 +98,7 @@ public class Channels extends ApplicationCommand {
                         }).build(),
                         buttons.danger("No, cancel", LazyEmoji.NO_CLEAR_DARK.emoji).ephemeral()
                                 .bindTo(no -> no.editMessage(LazyEmoji.YES_CLEAR + " Cancelled channel creation").setComponents().queue())
-                                .build())
+                                .build()))
                 .queue();
     }
 }

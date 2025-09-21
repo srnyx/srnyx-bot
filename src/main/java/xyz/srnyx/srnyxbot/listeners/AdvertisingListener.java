@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import xyz.srnyx.lazylibrary.LazyListener;
 import xyz.srnyx.lazylibrary.utility.LazyUtilities;
 
-import xyz.srnyx.srnyxbot.AdvertisingCondition;
+import xyz.srnyx.srnyxbot.advertising.AdvertisingCondition;
 import xyz.srnyx.srnyxbot.config.SrnyxConfig;
 
 import java.util.List;
