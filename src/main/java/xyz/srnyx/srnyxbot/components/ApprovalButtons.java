@@ -50,6 +50,7 @@ public record ApprovalButtons(@NotNull SrnyxConfig config, @NotNull Buttons butt
                         ActionRow.of(buttons.success("Approved!", LazyEmoji.YES_CLEAR.emoji).persistent()
                                 .bindTo(APPROVAL_BUTTON_YES)
                                 .build().asDisabled()))
+                .useComponentsV2()
                 .queue();
 
         // Add role
@@ -74,6 +75,7 @@ public record ApprovalButtons(@NotNull SrnyxConfig config, @NotNull Buttons butt
                         ActionRow.of(buttons.danger("Denied!", LazyEmoji.NO_CLEAR_DARK.emoji).persistent()
                                 .bindTo(APPROVAL_BUTTON_NO)
                                 .build().asDisabled()))
+                .useComponentsV2()
                 .queue();
 
         // Kick member

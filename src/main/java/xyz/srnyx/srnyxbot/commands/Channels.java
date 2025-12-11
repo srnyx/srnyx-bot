@@ -67,7 +67,7 @@ public class Channels extends ApplicationCommand {
                             if (categoryId != null) {
                                 yesCategory = guild.getCategoryById(categoryId);
                                 if (yesCategory == null) {
-                                    yes.editComponents(TextDisplay.of(LazyEmoji.NO + " The specified category no longer exists!")).queue();
+                                    yes.editComponents(TextDisplay.of(LazyEmoji.NO + " The specified category no longer exists!")).useComponentsV2().queue();
                                     return;
                                 }
                             }

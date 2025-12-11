@@ -39,6 +39,6 @@ public class Invites extends ApplicationCommand {
         final StringBuilder builder = new StringBuilder();
         final StandardGuildChannel standardChannel = channel == null ? (StandardGuildChannel) event.getChannel() : (StandardGuildChannel) channel;
         for (int i = amount, age = 604800; i > 0; i--, age--) builder.append("<").append(standardChannel.createInvite().setMaxUses(1).setMaxAge(age).complete().getUrl()).append(">").append("\n");
-        event.getHook().editOriginalComponents(TextDisplay.of(builder.toString())).queue();
+        event.getHook().editOriginalComponents(TextDisplay.of(builder.toString())).useComponentsV2().queue();
     }
 }

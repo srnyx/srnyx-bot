@@ -84,6 +84,6 @@ public class Survey extends ApplicationCommand {
         // Send message
         String message = LazyEmoji.YES + " Finished adding survey role to users!";
         if (!failed.isEmpty()) message += "\n" + LazyEmoji.NO + " Failed to give to these users: " + failedString;
-        event.getHook().editOriginalComponents(TextDisplay.of(message)).queue();
+        event.getHook().editOriginalComponents(TextDisplay.of(message)).useComponentsV2().queue();
     }
 }
