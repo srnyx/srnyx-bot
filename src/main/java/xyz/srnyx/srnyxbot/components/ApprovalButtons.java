@@ -7,13 +7,14 @@ import io.github.freya022.botcommands.api.core.annotations.Handler;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.UserSnowflake;
 
 import org.jetbrains.annotations.NotNull;
 
-import xyz.srnyx.lazylibrary.LazyEmbed;
+import xyz.srnyx.lazylibrary.LazyComponent;
 import xyz.srnyx.lazylibrary.LazyEmoji;
 
 import xyz.srnyx.srnyxbot.config.Approval;
@@ -32,22 +33,23 @@ public record ApprovalButtons(@NotNull SrnyxConfig config, @NotNull Buttons butt
         // Check permissions
         final Member clicker = event.getMember();
         if (clicker == null || !clicker.hasPermission(Permission.MANAGE_ROLES)) {
-            event.replyEmbeds(LazyEmbed.noPermission().build()).setEphemeral(true).queue();
+            event.replyComponents(LazyComponent.noPermission()).setEphemeral(true).queue();
             return;
         }
 
         // Get role
         final Optional<Role> role = config.getApprovalFromChannel(event.getChannel().getIdLong()).flatMap(Approval::getRole);
         if (role.isEmpty()) {
-            event.reply(LazyEmoji.NO + " This is not an approval channel!").setEphemeral(true).queue();
+            event.replyComponents(TextDisplay.of(LazyEmoji.NO + " This is not an approval channel!")).setEphemeral(true).queue();
             return;
         }
 
         // Edit message
-        event.editComponents(ActionRow.of(buttons.success("Approved!", LazyEmoji.YES_CLEAR.emoji)
-                        .persistent()
-                        .bindTo(APPROVAL_BUTTON_YES)
-                        .build().asDisabled()))
+        event.editComponents(
+                        TextDisplay.of(LazyEmoji.YES_CLEAR + " Approved!"),
+                        ActionRow.of(buttons.success("Approved!", LazyEmoji.YES_CLEAR.emoji).persistent()
+                                .bindTo(APPROVAL_BUTTON_YES)
+                                .build().asDisabled()))
                 .queue();
 
         // Add role
@@ -62,15 +64,16 @@ public record ApprovalButtons(@NotNull SrnyxConfig config, @NotNull Buttons butt
         // Check permissions
         final Member clicker = event.getMember();
         if (clicker == null || !clicker.hasPermission(Permission.MANAGE_ROLES)) {
-            event.replyEmbeds(LazyEmbed.noPermission().build()).setEphemeral(true).queue();
+            event.replyComponents(LazyComponent.noPermission()).setEphemeral(true).queue();
             return;
         }
 
         // Edit message
-        event.editComponents(ActionRow.of(buttons.danger("Denied!", LazyEmoji.NO_CLEAR_DARK.emoji)
-                        .persistent()
-                        .bindTo(APPROVAL_BUTTON_NO)
-                        .build().asDisabled()))
+        event.editComponents(
+                        TextDisplay.of(LazyEmoji.NO_CLEAR_DARK + " Denied!"),
+                        ActionRow.of(buttons.danger("Denied!", LazyEmoji.NO_CLEAR_DARK.emoji).persistent()
+                                .bindTo(APPROVAL_BUTTON_NO)
+                                .build().asDisabled()))
                 .queue();
 
         // Kick member

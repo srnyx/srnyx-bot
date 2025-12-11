@@ -10,7 +10,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import org.jetbrains.annotations.NotNull;
 
-import xyz.srnyx.lazylibrary.LazyEmbed;
 import xyz.srnyx.lazylibrary.LazyLibrary;
 
 import xyz.srnyx.srnyxbot.config.SrnyxConfig;
@@ -39,9 +38,7 @@ public class SrnyxBot {
                         GatewayIntent.GUILD_MESSAGES,
                         GatewayIntent.GUILD_MESSAGE_TYPING,
                         GatewayIntent.GUILD_VOICE_STATES)
-                .embedDefault(LazyEmbed.Key.COLOR, 3840960)
-                .embedDefault(LazyEmbed.Key.FOOTER_TEXT, "srnyx's Bot")
-                .embedDefault(LazyEmbed.Key.FOOTER_ICON, "https://media.srnyx.com/r/circle.png")
+                .defaultComponentsV2()
                 .activities(Activity.watching("srnyx.com"))
                 .startBot(SrnyxBot.class);
     }

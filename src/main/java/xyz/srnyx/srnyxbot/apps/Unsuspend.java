@@ -11,7 +11,9 @@ import io.github.freya022.botcommands.api.components.Buttons;
 import io.github.freya022.botcommands.api.components.data.InteractionConstraints;
 
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -54,7 +56,7 @@ public class Unsuspend extends ApplicationCommand {
 
         // Check if token is set
         if (config.playHosting.token == null || config.playHosting.token.isBlank()) {
-            event.reply(LazyEmoji.NO + " **Play Hosting token is not set!** Please set it in the config...").setEphemeral(true).queue();
+            event.replyComponents(TextDisplay.of(LazyEmoji.NO + " **Play Hosting token is not set!** Please set it in the config...")).setEphemeral(true).queue();
             return;
         }
 
@@ -69,7 +71,7 @@ public class Unsuspend extends ApplicationCommand {
                 .findFirst()
                 .orElse(null);
         if (id == null) {
-            hook.editOriginal(LazyEmoji.NO + " **No server link with an ID found in the message!** Your panel link looks like this: `panel.play.hosting/server/XXXXXXXX`, please send us that...").queue();
+            hook.editOriginalComponents(TextDisplay.of(LazyEmoji.NO + " **No server link with an ID found in the message!** Your panel link looks like this: `panel.play.hosting/server/XXXXXXXX`, please send us that...")).queue();
             return;
         }
 
@@ -78,13 +80,13 @@ public class Unsuspend extends ApplicationCommand {
                 .map(json -> json.getAsJsonObject().getAsJsonObject("attributes"))
                 .orElse(null);
         if (clientServer == null) {
-            hook.editOriginal(LazyEmoji.NO + " No client server found with ID `" + id + "`!").queue();
+            hook.editOriginal(new MessageEditBuilder().setComponents(TextDisplay.of(LazyEmoji.NO + " No client server found with ID `" + id + "`!")).build()).queue();
             return;
         }
 
         // Check if suspended
         if (!clientServer.has("is_suspended") || !clientServer.get("is_suspended").getAsBoolean()) {
-            hook.editOriginal(LazyEmoji.NO + " **Server with ID `" + id + "` is not suspended!** Please check to make sure your server isn't currently in limbo...").queue();
+            hook.editOriginalComponents(TextDisplay.of(LazyEmoji.NO + " **Server with ID `" + id + "` is not suspended!** Please check to make sure your server isn't currently in limbo...")).queue();
             return;
         }
 
@@ -94,7 +96,7 @@ public class Unsuspend extends ApplicationCommand {
                 .map(json -> json.getAsJsonObject().getAsJsonObject("attributes"))
                 .orElse(null);
         if (applicationServer == null) {
-            hook.editOriginal(LazyEmoji.NO + " No application server found with client ID `" + id + "`!").queue();
+            hook.editOriginalComponents(TextDisplay.of(LazyEmoji.NO + " No application server found with client ID `" + id + "`!")).queue();
             return;
         }
 
@@ -102,11 +104,12 @@ public class Unsuspend extends ApplicationCommand {
         final OffsetDateTime lastUpdated = OffsetDateTime.parse(applicationServer.get("updated_at").getAsString());
         final OffsetDateTime twoHoursAgo = OffsetDateTime.now().minusHours(2);
         if (lastUpdated.isAfter(twoHoursAgo)) {
-            hook.editOriginal(LazyEmoji.NO + " **Server with ID `" + id + "` was updated recently!** As instructed in <#1332833015025500202>, please wait 2+ hours before opening a stuck ticket...")
-                    .setComponents(ActionRow.of(buttons.danger("Unsuspend anyways", LazyEmoji.WARNING_CLEAR.emoji).ephemeral()
-                            .bindTo(bypass -> bypass.deferEdit().queue(bypassHook -> unsuspend(bypassHook, id, applicationServerUrl)))
-                            .constraints(InteractionConstraints.ofRoleIds(config.playHosting.support.id))
-                            .build()))
+            hook.editOriginalComponents(
+                            TextDisplay.of(LazyEmoji.NO + " **Server with ID `" + id + "` was updated recently!** As instructed in <#1332833015025500202>, please wait 2+ hours before opening a stuck ticket..."),
+                            ActionRow.of(buttons.danger("Unsuspend anyways", LazyEmoji.WARNING_CLEAR.emoji).ephemeral()
+                                    .bindTo(bypass -> bypass.deferEdit().queue(bypassHook -> unsuspend(bypassHook, id, applicationServerUrl)))
+                                    .constraints(InteractionConstraints.ofRoleIds(config.playHosting.support.id))
+                                    .build()))
                     .queue();
             return;
         }
@@ -127,21 +130,15 @@ public class Unsuspend extends ApplicationCommand {
         // Try to unsuspend server
         final HttpUtility.Response response = HttpUtility.postJson(USER_AGENT, applicationServerUrl + "/unsuspend", null, getConnectionConsumer()).orElse(null);
         if (response == null) {
-            hook.editOriginal(LazyEmoji.NO + " **Failed to unsuspend server with ID `" + id + "`!** Contact <@242385234992037888> so he can check the console")
-                    .setComponents()
-                    .queue();
+            hook.editOriginalComponents(TextDisplay.of(LazyEmoji.NO + " **Failed to unsuspend server with ID `" + id + "`!** Contact <@242385234992037888> so he can check the console")).queue();
             return;
         }
         if (response.code < 200 || response.code >= 300) {
-            hook.editOriginal(LazyEmoji.NO + " Failed to unsuspend server with ID `" + id + "`!\n**" + response.code + ":** " + response.message)
-                    .setComponents()
-                    .queue();
+            hook.editOriginalComponents(TextDisplay.of(LazyEmoji.NO + " Failed to unsuspend server with ID `" + id + "`!\n**" + response.code + ":** " + response.message)).queue();
             return;
         }
 
         // Reply
-        hook.editOriginal(LazyEmoji.YES + " Successfully unsuspended server with ID `" + id + "`")
-                .setComponents()
-                .queue();
+        hook.editOriginalComponents(TextDisplay.of(LazyEmoji.YES + " Successfully unsuspended server with ID `" + id + "`")).queue();
     }
 }

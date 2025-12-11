@@ -6,6 +6,7 @@ import io.github.freya022.botcommands.api.commands.application.CommandScope;
 import io.github.freya022.botcommands.api.commands.application.slash.GuildSlashEvent;
 import io.github.freya022.botcommands.api.commands.application.slash.annotations.*;
 
+import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.StandardGuildChannel;
@@ -13,15 +14,15 @@ import net.dv8tion.jda.api.entities.channel.middleman.StandardGuildChannel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import xyz.srnyx.srnyxbot.config.SrnyxConfig;
+import xyz.srnyx.lazylibrary.LazyLibrary;
 
 
 @Command
 public class Invites extends ApplicationCommand {
-    @NotNull private final SrnyxConfig config;
+    @NotNull private final LazyLibrary library;
 
-    public Invites(@NotNull SrnyxConfig config) {
-        this.config = config;
+    public Invites(@NotNull LazyLibrary library) {
+        this.library = library;
     }
 
     @TopLevelSlashCommandData(
@@ -33,11 +34,11 @@ public class Invites extends ApplicationCommand {
     public void invites(@NotNull GuildSlashEvent event,
                         @SlashOption(description = "The amount of invites to create (max 50)") @LongRange(from = 1, to = 50) int amount,
                         @SlashOption(description = "The channel to create invites for") @ChannelTypes({ChannelType.NEWS, ChannelType.TEXT, ChannelType.VOICE, ChannelType.STAGE, ChannelType.FORUM}) @Nullable GuildChannel channel) {
-        if (config.checkNotOwner(event)) return;
+        if (library.checkNotOwner(event)) return;
         event.deferReply().queue();
         final StringBuilder builder = new StringBuilder();
         final StandardGuildChannel standardChannel = channel == null ? (StandardGuildChannel) event.getChannel() : (StandardGuildChannel) channel;
         for (int i = amount, age = 604800; i > 0; i--, age--) builder.append("<").append(standardChannel.createInvite().setMaxUses(1).setMaxAge(age).complete().getUrl()).append(">").append("\n");
-        event.getHook().editOriginal(builder.toString()).queue();
+        event.getHook().editOriginalComponents(TextDisplay.of(builder.toString())).queue();
     }
 }

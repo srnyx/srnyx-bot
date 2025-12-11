@@ -8,6 +8,7 @@ import io.github.freya022.botcommands.api.commands.application.slash.annotations
 import io.github.freya022.botcommands.api.commands.application.slash.annotations.SlashOption;
 import io.github.freya022.botcommands.api.commands.application.slash.annotations.TopLevelSlashCommandData;
 
+import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.UserSnowflake;
@@ -16,8 +17,7 @@ import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import org.jetbrains.annotations.NotNull;
 
 import xyz.srnyx.lazylibrary.LazyEmoji;
-
-import xyz.srnyx.srnyxbot.config.SrnyxConfig;
+import xyz.srnyx.lazylibrary.LazyLibrary;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +26,10 @@ import java.util.NoSuchElementException;
 
 @Command
 public class Survey extends ApplicationCommand {
-    @NotNull private final SrnyxConfig config;
+    @NotNull private final LazyLibrary library;
 
-    public Survey(@NotNull SrnyxConfig config) {
-        this.config = config;
+    public Survey(@NotNull LazyLibrary library) {
+        this.library = library;
     }
 
     @TopLevelSlashCommandData(
@@ -40,10 +40,10 @@ public class Survey extends ApplicationCommand {
             description = "CG | Add survey role to specified users")
     public void surveyCommand(@NotNull GuildSlashEvent event,
                               @SlashOption(description = "The users to add the role to (separate using '=:=')") @NotNull String users) {
-        if (config.checkNotOwner(event)) return;
+        if (library.checkNotOwner(event)) return;
         final Guild guild = event.getGuild();
         if (guild.getIdLong() != 617280459717476353L) {
-            event.reply(LazyEmoji.NO + " This command is only available in **CommandGeek Labs**").setEphemeral(true).queue();
+            event.replyComponents(TextDisplay.of(LazyEmoji.NO + " This command is only available in **CommandGeek Labs**!")).setEphemeral(true).queue();
             return;
         }
         final Role role = guild.getRoleById(1069366219515371650L);
@@ -84,6 +84,6 @@ public class Survey extends ApplicationCommand {
         // Send message
         String message = LazyEmoji.YES + " Finished adding survey role to users!";
         if (!failed.isEmpty()) message += "\n" + LazyEmoji.NO + " Failed to give to these users: " + failedString;
-        event.getHook().editOriginal(message).queue();
+        event.getHook().editOriginalComponents(TextDisplay.of(message)).queue();
     }
 }

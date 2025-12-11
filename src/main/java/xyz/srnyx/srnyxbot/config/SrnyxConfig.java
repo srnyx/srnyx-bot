@@ -3,7 +3,6 @@ package xyz.srnyx.srnyxbot.config;
 import io.github.freya022.botcommands.api.core.service.annotations.BService;
 
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,7 +11,6 @@ import org.spongepowered.configurate.ConfigurationNode;
 
 import xyz.srnyx.javautilities.manipulation.Mapper;
 
-import xyz.srnyx.lazylibrary.LazyEmbed;
 import xyz.srnyx.lazylibrary.LazyLibrary;
 import xyz.srnyx.lazylibrary.config.LazyRole;
 
@@ -75,12 +73,6 @@ public class SrnyxConfig {
         return approvals.stream()
                 .filter(approval -> approval.channelId() == channelId)
                 .findFirst();
-    }
-
-    public boolean checkNotOwner(@NotNull IReplyCallback event) {
-        final boolean notOwner = !LazyLibrary.INSTANCE.isOwner(event.getUser().getIdLong());
-        if (notOwner) event.replyEmbeds(LazyEmbed.noPermission().build()).setEphemeral(true).queue();
-        return notOwner;
     }
 
     public class PlayHosting implements Supplier<Guild> {
