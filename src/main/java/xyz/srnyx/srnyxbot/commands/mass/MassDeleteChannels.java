@@ -38,8 +38,8 @@ public class MassDeleteChannels extends ApplicationCommand {
 
     @TopLevelSlashCommandData(scope = CommandScope.GUILD, defaultLocked = true)
     @JDASlashCommand(
-            group = "mass",
-            name = "delete_channels",
+            name = "mass",
+            subcommand = "delete_channels",
             description = "SRNYX | Deletes all channels of a category")
     public void massDeleteChannels(@NotNull GuildSlashEvent event,
                                    @SlashOption(description = "The category of the channels (empty for current)") @Nullable Category category) {

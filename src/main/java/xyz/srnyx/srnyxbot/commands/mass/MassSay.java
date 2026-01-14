@@ -2,11 +2,9 @@ package xyz.srnyx.srnyxbot.commands.mass;
 
 import io.github.freya022.botcommands.api.commands.annotations.Command;
 import io.github.freya022.botcommands.api.commands.application.ApplicationCommand;
-import io.github.freya022.botcommands.api.commands.application.CommandScope;
 import io.github.freya022.botcommands.api.commands.application.slash.GuildSlashEvent;
 import io.github.freya022.botcommands.api.commands.application.slash.annotations.JDASlashCommand;
 import io.github.freya022.botcommands.api.commands.application.slash.annotations.SlashOption;
-import io.github.freya022.botcommands.api.commands.application.slash.annotations.TopLevelSlashCommandData;
 import io.github.freya022.botcommands.api.components.Buttons;
 
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
@@ -37,10 +35,9 @@ public class MassSay extends ApplicationCommand {
         this.buttons = buttons;
     }
 
-    @TopLevelSlashCommandData(scope = CommandScope.GUILD, defaultLocked = true)
     @JDASlashCommand(
-            group = "mass",
-            name = "message",
+            name = "mass",
+            subcommand = "message",
             description = "SRNYX | Sends a message in every channel of a category")
     public void massSay(@NotNull GuildSlashEvent event,
                         @SlashOption(description = "The message to send") @NotNull String message,
