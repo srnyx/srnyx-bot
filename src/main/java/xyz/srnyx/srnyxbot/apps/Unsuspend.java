@@ -10,7 +10,7 @@ import io.github.freya022.botcommands.api.commands.application.context.message.G
 import io.github.freya022.botcommands.api.components.Buttons;
 import io.github.freya022.botcommands.api.components.data.InteractionConstraints;
 
-import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.section.Section;
 import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 
@@ -103,15 +103,15 @@ public class Unsuspend extends ApplicationCommand {
         final OffsetDateTime lastUpdated = OffsetDateTime.parse(applicationServer.get("updated_at").getAsString());
         final OffsetDateTime twoHoursAgo = OffsetDateTime.now().minusHours(2);
         if (lastUpdated.isAfter(twoHoursAgo)) {
-            hook.editOriginalComponents(
-                            TextDisplay.of(LazyEmoji.NO + " **Server with ID `" + id + "` was updated recently!** As instructed in <#1332833015025500202>, please wait 2+ hours before opening a stuck ticket..."),
-                            ActionRow.of(buttons.danger("Unsuspend anyways", LazyEmoji.WARNING_CLEAR.emoji).ephemeral()
+            hook.editOriginalComponents(Section.of(
+                            buttons.danger("Unsuspend anyways", LazyEmoji.WARNING_CLEAR.emoji).ephemeral()
                                     .bindTo(bypass -> {
                                         bypass.deferEdit().queue();
                                         unsuspend(bypass.getHook(), id, applicationServerUrl);
                                     })
                                     .constraints(InteractionConstraints.ofRoleIds(config.playHosting.support.id))
-                                    .build()))
+                                    .build(),
+                            TextDisplay.of(LazyEmoji.NO + " **Server with ID `" + id + "` was updated recently!** As instructed in <#1332833015025500202>, please wait 2+ hours before opening a stuck ticket...")))
                     .useComponentsV2().queue();
             return;
         }
