@@ -14,5 +14,5 @@ setupLazyLibrary(
         group = "xyz.srnyx",
         version = "2.0.0",
         description = "General purpose bot for srnyx"),
-    jdaConfig = DependencyConfig(version = "6.1.3"),
+    jdaConfig = DependencyConfig(version = "6.3.0"),
     lazyLibraryConfig = DependencyConfig(version = "botcommands-v3-SNAPSHOT"))
