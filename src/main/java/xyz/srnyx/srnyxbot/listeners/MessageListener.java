@@ -19,7 +19,7 @@ import java.util.Set;
 
 
 @BService
-public final class MessageListener {
+public class MessageListener {
     @NotNull private static final Map<Character, UnicodeEmoji> ALPHABET_EMOJIS = MapGenerator.HASH_MAP.mapOf(
             List.of('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'),
             List.of(Emoji.fromUnicode("U+1F1E6"), Emoji.fromUnicode("U+1F1E7"), Emoji.fromUnicode("U+1F1E8"), Emoji.fromUnicode("U+1F1E9"), Emoji.fromUnicode("U+1F1EA"),

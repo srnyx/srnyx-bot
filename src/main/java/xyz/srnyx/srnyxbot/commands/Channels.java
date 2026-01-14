@@ -39,7 +39,7 @@ public class Channels extends ApplicationCommand {
     }
 
     @UserPermissions(Permission.ADMINISTRATOR)
-    @TopLevelSlashCommandData(scope = CommandScope.GUILD)
+    @TopLevelSlashCommandData(scope = CommandScope.GUILD, defaultLocked = true)
     @JDASlashCommand(
             name = "channels",
             description = "SRNYX | Create a private channel for each person in the server")
@@ -50,7 +50,7 @@ public class Channels extends ApplicationCommand {
         // Check bot permissions
         final Member selfMember = event.getGuild().getSelfMember();
         if (!selfMember.hasPermission(Permission.MANAGE_CHANNEL)) {
-            event.replyComponents(TextDisplay.of(LazyEmoji.NO + " I need the `" + Permission.MANAGE_CHANNEL.getName() + "` permission to do this!")).setEphemeral(true).queue();
+            event.reply(LazyEmoji.NO + " I need the `" + Permission.MANAGE_CHANNEL.getName() + "` permission to do this!").queue();
             return;
         }
 
@@ -99,6 +99,6 @@ public class Channels extends ApplicationCommand {
                         buttons.danger("No, cancel", LazyEmoji.NO_CLEAR_DARK.emoji).ephemeral()
                                 .bindTo(no -> no.editComponents(TextDisplay.of(LazyEmoji.YES_CLEAR + " Cancelled channel creation")).queue())
                                 .build()))
-                .setEphemeral(true).queue();
+                .setEphemeral(true).useComponentsV2().queue();
     }
 }

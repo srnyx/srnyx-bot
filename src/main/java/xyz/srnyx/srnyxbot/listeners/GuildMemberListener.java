@@ -20,7 +20,7 @@ import java.util.Collections;
 
 
 @BService
-public final class GuildMemberListener {
+public class GuildMemberListener {
     @NotNull private final SrnyxConfig config;
     @NotNull private final Buttons buttons;
 
@@ -39,6 +39,6 @@ public final class GuildMemberListener {
                                         buttons.success("Approve", LazyEmoji.YES_CLEAR.emoji).persistent().bindTo(ApprovalButtons.APPROVAL_BUTTON_YES).build(),
                                         buttons.danger("Deny", LazyEmoji.NO_CLEAR_DARK.emoji).persistent().bindTo(ApprovalButtons.APPROVAL_BUTTON_NO).build()))
                         .setAllowedMentions(Collections.emptyList())
-                        .queue());
+                        .useComponentsV2().queue());
     }
 }

@@ -38,7 +38,6 @@ public class SrnyxBot {
                         GatewayIntent.GUILD_MESSAGES,
                         GatewayIntent.GUILD_MESSAGE_TYPING,
                         GatewayIntent.GUILD_VOICE_STATES)
-                .defaultComponentsV2()
                 .activities(Activity.watching("srnyx.com"))
                 .startBot(SrnyxBot.class);
     }

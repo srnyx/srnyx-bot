@@ -33,25 +33,22 @@ public record ApprovalButtons(@NotNull SrnyxConfig config, @NotNull Buttons butt
         // Check permissions
         final Member clicker = event.getMember();
         if (clicker == null || !clicker.hasPermission(Permission.MANAGE_ROLES)) {
-            event.replyComponents(LazyComponent.noPermission()).setEphemeral(true).queue();
+            event.replyComponents(LazyComponent.noPermission()).setEphemeral(true).useComponentsV2().queue();
             return;
         }
 
         // Get role
         final Optional<Role> role = config.getApprovalFromChannel(event.getChannel().getIdLong()).flatMap(Approval::getRole);
         if (role.isEmpty()) {
-            event.replyComponents(TextDisplay.of(LazyEmoji.NO + " This is not an approval channel!")).setEphemeral(true).queue();
+            event.reply(LazyEmoji.NO + " This is not an approval channel!").setEphemeral(true).queue();
             return;
         }
 
         // Edit message
         event.editComponents(
                         TextDisplay.of(LazyEmoji.YES_CLEAR + " Approved!"),
-                        ActionRow.of(buttons.success("Approved!", LazyEmoji.YES_CLEAR.emoji).persistent()
-                                .bindTo(APPROVAL_BUTTON_YES)
-                                .build().asDisabled()))
-                .useComponentsV2()
-                .queue();
+                        ActionRow.of(buttons.success("Approved!", LazyEmoji.YES_CLEAR.emoji).toLabelButton()))
+                .useComponentsV2().queue();
 
         // Add role
         final String content = event.getMessage().getContentRaw();
@@ -65,18 +62,15 @@ public record ApprovalButtons(@NotNull SrnyxConfig config, @NotNull Buttons butt
         // Check permissions
         final Member clicker = event.getMember();
         if (clicker == null || !clicker.hasPermission(Permission.MANAGE_ROLES)) {
-            event.replyComponents(LazyComponent.noPermission()).setEphemeral(true).queue();
+            event.replyComponents(LazyComponent.noPermission()).setEphemeral(true).useComponentsV2().queue();
             return;
         }
 
         // Edit message
         event.editComponents(
                         TextDisplay.of(LazyEmoji.NO_CLEAR_DARK + " Denied!"),
-                        ActionRow.of(buttons.danger("Denied!", LazyEmoji.NO_CLEAR_DARK.emoji).persistent()
-                                .bindTo(APPROVAL_BUTTON_NO)
-                                .build().asDisabled()))
-                .useComponentsV2()
-                .queue();
+                        ActionRow.of(buttons.danger("Denied!", LazyEmoji.NO_CLEAR_DARK.emoji).toLabelButton()))
+                .useComponentsV2().queue();
 
         // Kick member
         final String content = event.getMessage().getContentRaw();
