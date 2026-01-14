@@ -38,7 +38,6 @@ public class Channels extends ApplicationCommand {
         this.buttons = buttons;
     }
 
-    @UserPermissions(Permission.ADMINISTRATOR)
     @TopLevelSlashCommandData(scope = CommandScope.GUILD, defaultLocked = true)
     @JDASlashCommand(
             name = "channels",
