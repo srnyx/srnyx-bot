@@ -71,7 +71,7 @@ public class MassSay extends ApplicationCommand {
                                             buttons.danger("Cancel", LazyEmoji.NO_CLEAR_DARK.emoji).ephemeral()
                                                     .bindTo(cancelButton -> {
                                                         cancel.set(true);
-                                                        cancelButton.editComponents(TextDisplay.of(LazyEmoji.NO + " Mass message for " + categoryName + " cancelled!")).useComponentsV2().queue();
+                                                        cancelButton.editComponents(TextDisplay.of(LazyEmoji.NO + " Mass say for " + categoryName + " cancelled!")).useComponentsV2().queue();
                                                     }).build(),
                                             TextDisplay.of(LazyEmoji.YES + " Sending message to all " + channelCount + " channels in " + categoryName + "..."))).useComponentsV2().queue();
 
@@ -87,15 +87,13 @@ public class MassSay extends ApplicationCommand {
                                     // Queue actions
                                     RestAction.allOf(actions).queue(
                                             _ -> {
-                                                if (cancel.get()) return;
-                                                button.editComponents(TextDisplay.of(LazyEmoji.YES + " Successfully sent message to " + channelCount + " channels in " + categoryName)).useComponentsV2().queue();
+                                                if (!cancel.get()) button.getHook().editOriginalComponents(TextDisplay.of(LazyEmoji.YES + " Successfully sent message to " + channelCount + " channels in " + categoryName)).useComponentsV2().queue();
                                             }, _ -> {
-                                                if (cancel.get()) return;
-                                                button.editComponents(TextDisplay.of(LazyEmoji.NO + " An error occurred while sending messages in " + categoryName + "!")).useComponentsV2().queue();
+                                                if (!cancel.get()) button.getHook().editOriginalComponents(TextDisplay.of(LazyEmoji.NO + " An error occurred while sending messages in " + categoryName + "!")).useComponentsV2().queue();
                                             });
                                 }).build(),
                         buttons.danger("No, DON'T send messages", LazyEmoji.NO_CLEAR_DARK.emoji).ephemeral()
-                                .bindTo(button -> button.editComponents(TextDisplay.of(LazyEmoji.NO + " Mass message for " + categoryName + " cancelled!")).useComponentsV2().queue())
+                                .bindTo(button -> button.editComponents(TextDisplay.of(LazyEmoji.NO + " Mass say for " + categoryName + " cancelled!")).useComponentsV2().queue())
                                 .build())).setEphemeral(true).useComponentsV2().queue();
     }
 }
