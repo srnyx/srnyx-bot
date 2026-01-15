@@ -14,6 +14,8 @@ import net.dv8tion.jda.api.entities.channel.attribute.ICategorizableChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import xyz.srnyx.lazylibrary.LazyEmoji;
 import xyz.srnyx.lazylibrary.LazyLibrary;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -37,7 +40,7 @@ public class MassSay extends ApplicationCommand {
 
     @JDASlashCommand(
             name = "mass",
-            subcommand = "message",
+            subcommand = "say",
             description = "SRNYX | Sends a message in every channel of a category")
     public void massSay(@NotNull GuildSlashEvent event,
                         @SlashOption(description = "The message to send") @NotNull String message,
@@ -57,28 +60,39 @@ public class MassSay extends ApplicationCommand {
         final String channelCount = "**" + channels.size() + "**";
 
         // Confirmation
-        final AtomicBoolean cancel = new AtomicBoolean(false);
         event.replyComponents(
                 TextDisplay.of(LazyEmoji.WARNING + " Are you sure you want to send the following message to all " + channelCount + " channels in " + categoryName + "?\n\n" + message),
                 ActionRow.of(
                         buttons.success("Yes, send messages", LazyEmoji.YES_CLEAR.emoji).ephemeral()
                                 .bindTo(button -> {
                                     // Add cancel button
+                                    final AtomicBoolean cancel = new AtomicBoolean(false);
                                     button.editComponents(Section.of(
                                             buttons.danger("Cancel", LazyEmoji.NO_CLEAR_DARK.emoji).ephemeral()
                                                     .bindTo(cancelButton -> {
                                                         cancel.set(true);
-                                                        cancelButton.editComponents(TextDisplay.of(LazyEmoji.NO + " Mass message for " + categoryName + " cancelled!")).queue();
+                                                        cancelButton.editComponents(TextDisplay.of(LazyEmoji.NO + " Mass message for " + categoryName + " cancelled!")).useComponentsV2().queue();
                                                     }).build(),
                                             TextDisplay.of(LazyEmoji.YES + " Sending message to all " + channelCount + " channels in " + categoryName + "..."))).useComponentsV2().queue();
 
-                                    // Send message to all channels in category
+                                    // Get message actions
+                                    final List<MessageCreateAction> actions = new ArrayList<>();
                                     for (final GuildChannel channel : channels) {
                                         if (channel instanceof MessageChannel messageChannel) {
-                                            if (cancel.get()) break;
-                                            messageChannel.sendMessage(message).setCheck(() -> !cancel.get()).queue();
+                                            if (cancel.get()) return;
+                                            actions.add(messageChannel.sendMessage(message).setCheck(() -> !cancel.get()));
                                         }
                                     }
+
+                                    // Queue actions
+                                    RestAction.allOf(actions).queue(
+                                            _ -> {
+                                                if (cancel.get()) return;
+                                                button.editComponents(TextDisplay.of(LazyEmoji.YES + " Successfully sent message to " + channelCount + " channels in " + categoryName)).useComponentsV2().queue();
+                                            }, _ -> {
+                                                if (cancel.get()) return;
+                                                button.editComponents(TextDisplay.of(LazyEmoji.NO + " An error occurred while sending messages in " + categoryName + "!")).useComponentsV2().queue();
+                                            });
                                 }).build(),
                         buttons.danger("No, DON'T send messages", LazyEmoji.NO_CLEAR_DARK.emoji).ephemeral()
                                 .bindTo(button -> button.editComponents(TextDisplay.of(LazyEmoji.NO + " Mass message for " + categoryName + " cancelled!")).useComponentsV2().queue())
