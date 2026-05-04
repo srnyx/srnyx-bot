@@ -15,7 +15,7 @@ import net.dv8tion.jda.api.entities.UserSnowflake;
 import org.jetbrains.annotations.NotNull;
 
 import xyz.srnyx.lazylibrary.LazyComponent;
-import xyz.srnyx.lazylibrary.LazyEmoji;
+import xyz.srnyx.lazylibrary.emoji.LazyEmoji;
 
 import xyz.srnyx.srnyxbot.config.Approval;
 import xyz.srnyx.srnyxbot.config.SrnyxConfig;
@@ -47,7 +47,7 @@ public record ApprovalButtons(@NotNull SrnyxConfig config, @NotNull Buttons butt
         // Edit message
         event.editComponents(
                         TextDisplay.of(LazyEmoji.YES_CLEAR + " Approved!"),
-                        ActionRow.of(buttons.success("Approved!", LazyEmoji.YES_CLEAR.emoji).toLabelButton()))
+                        ActionRow.of(buttons.success("Approved!", LazyEmoji.YES_CLEAR).toLabelButton()))
                 .useComponentsV2().queue();
 
         // Add role
@@ -69,7 +69,7 @@ public record ApprovalButtons(@NotNull SrnyxConfig config, @NotNull Buttons butt
         // Edit message
         event.editComponents(
                         TextDisplay.of(LazyEmoji.NO_CLEAR_DARK + " Denied!"),
-                        ActionRow.of(buttons.danger("Denied!", LazyEmoji.NO_CLEAR_DARK.emoji).toLabelButton()))
+                        ActionRow.of(buttons.danger("Denied!", LazyEmoji.NO_CLEAR_DARK).toLabelButton()))
                 .useComponentsV2().queue();
 
         // Kick member

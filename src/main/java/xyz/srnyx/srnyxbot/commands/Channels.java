@@ -1,7 +1,6 @@
 package xyz.srnyx.srnyxbot.commands;
 
 import io.github.freya022.botcommands.api.commands.annotations.Command;
-import io.github.freya022.botcommands.api.commands.application.ApplicationCommand;
 import io.github.freya022.botcommands.api.commands.application.CommandScope;
 import io.github.freya022.botcommands.api.commands.application.slash.GuildSlashEvent;
 import io.github.freya022.botcommands.api.commands.application.slash.annotations.JDASlashCommand;
@@ -21,14 +20,14 @@ import net.dv8tion.jda.api.interactions.InteractionHook;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import xyz.srnyx.lazylibrary.LazyEmoji;
+import xyz.srnyx.lazylibrary.emoji.LazyEmoji;
 import xyz.srnyx.lazylibrary.LazyLibrary;
 
 import java.util.Objects;
 
 
 @Command
-public class Channels extends ApplicationCommand {
+public class Channels {
     @NotNull private final LazyLibrary library;
     @NotNull private final Buttons buttons;
 
@@ -57,7 +56,7 @@ public class Channels extends ApplicationCommand {
         event.replyComponents(
                 TextDisplay.of(LazyEmoji.WARNING + " Are you sure you want to create a private channel for **EACH** member in this server?"),
                 ActionRow.of(
-                        buttons.success("Yes, create channels", LazyEmoji.YES_CLEAR.emoji).ephemeral().bindTo(yes -> {
+                        buttons.success("Yes, create channels", LazyEmoji.YES_CLEAR).ephemeral().bindTo(yes -> {
                             final Guild guild =  Objects.requireNonNull(yes.getGuild());
 
                             // Get Category
@@ -94,7 +93,7 @@ public class Channels extends ApplicationCommand {
                                     })
                                     .onError(error -> hook.editOriginalComponents(TextDisplay.of("Failed to load members: " + error.getMessage())).queue());
                         }).build(),
-                        buttons.danger("No, cancel", LazyEmoji.NO_CLEAR_DARK.emoji).ephemeral()
+                        buttons.danger("No, cancel", LazyEmoji.NO_CLEAR_DARK).ephemeral()
                                 .bindTo(no -> no.editComponents(TextDisplay.of(LazyEmoji.YES_CLEAR + " Cancelled channel creation")).queue())
                                 .build()))
                 .setEphemeral(true).useComponentsV2().queue();

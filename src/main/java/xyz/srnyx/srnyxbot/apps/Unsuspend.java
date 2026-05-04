@@ -3,7 +3,6 @@ package xyz.srnyx.srnyxbot.apps;
 import com.google.gson.JsonObject;
 
 import io.github.freya022.botcommands.api.commands.annotations.Command;
-import io.github.freya022.botcommands.api.commands.application.ApplicationCommand;
 import io.github.freya022.botcommands.api.commands.application.CommandScope;
 import io.github.freya022.botcommands.api.commands.application.context.annotations.JDAMessageCommand;
 import io.github.freya022.botcommands.api.commands.application.context.message.GuildMessageEvent;
@@ -18,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import xyz.srnyx.javautilities.HttpUtility;
 
-import xyz.srnyx.lazylibrary.LazyEmoji;
+import xyz.srnyx.lazylibrary.emoji.LazyEmoji;
 
 import xyz.srnyx.srnyxbot.config.SrnyxConfig;
 
@@ -29,7 +28,7 @@ import java.util.regex.Pattern;
 
 
 @Command
-public class Unsuspend extends ApplicationCommand {
+public class Unsuspend {
     @NotNull private static final String USER_AGENT = "srnyx's Bot";
     @NotNull private static final String URL = "https://panel.play.hosting/api";
     @NotNull private static final Pattern PATTERN = Pattern.compile("panel\\.play\\.hosting/server/([a-z0-9]{8})");
@@ -104,7 +103,7 @@ public class Unsuspend extends ApplicationCommand {
         final OffsetDateTime twoHoursAgo = OffsetDateTime.now().minusHours(2);
         if (lastUpdated.isAfter(twoHoursAgo)) {
             hook.editOriginalComponents(Section.of(
-                            buttons.danger("Unsuspend anyways", LazyEmoji.WARNING_CLEAR.emoji).ephemeral()
+                            buttons.danger("Unsuspend anyways", LazyEmoji.WARNING_CLEAR).ephemeral()
                                     .bindTo(bypass -> {
                                         bypass.deferEdit().queue();
                                         unsuspend(bypass.getHook(), id, applicationServerUrl);

@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 
 import org.jetbrains.annotations.NotNull;
 
-import xyz.srnyx.lazylibrary.LazyEmoji;
+import xyz.srnyx.lazylibrary.emoji.LazyEmoji;
 
 import xyz.srnyx.srnyxbot.components.ApprovalButtons;
 import xyz.srnyx.srnyxbot.config.Approval;
@@ -36,8 +36,8 @@ public class GuildMemberListener {
                 .ifPresent(textChannel -> textChannel.sendMessageComponents(
                                 TextDisplay.of(event.getMember().getAsMention()),
                                 ActionRow.of(
-                                        buttons.success("Approve", LazyEmoji.YES_CLEAR.emoji).persistent().bindTo(ApprovalButtons.APPROVAL_BUTTON_YES).build(),
-                                        buttons.danger("Deny", LazyEmoji.NO_CLEAR_DARK.emoji).persistent().bindTo(ApprovalButtons.APPROVAL_BUTTON_NO).build()))
+                                        buttons.success("Approve", LazyEmoji.YES_CLEAR).persistent().bindTo(ApprovalButtons.APPROVAL_BUTTON_YES).build(),
+                                        buttons.danger("Deny", LazyEmoji.NO_CLEAR_DARK).persistent().bindTo(ApprovalButtons.APPROVAL_BUTTON_NO).build()))
                         .setAllowedMentions(Collections.emptyList())
                         .useComponentsV2().queue());
     }

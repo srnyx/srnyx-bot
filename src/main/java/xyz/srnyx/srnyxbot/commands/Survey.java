@@ -1,7 +1,6 @@
 package xyz.srnyx.srnyxbot.commands;
 
 import io.github.freya022.botcommands.api.commands.annotations.Command;
-import io.github.freya022.botcommands.api.commands.application.ApplicationCommand;
 import io.github.freya022.botcommands.api.commands.application.CommandScope;
 import io.github.freya022.botcommands.api.commands.application.slash.GuildSlashEvent;
 import io.github.freya022.botcommands.api.commands.application.slash.annotations.JDASlashCommand;
@@ -15,7 +14,7 @@ import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 
 import org.jetbrains.annotations.NotNull;
 
-import xyz.srnyx.lazylibrary.LazyEmoji;
+import xyz.srnyx.lazylibrary.emoji.LazyEmoji;
 import xyz.srnyx.lazylibrary.LazyLibrary;
 
 import java.util.ArrayList;
@@ -24,7 +23,7 @@ import java.util.NoSuchElementException;
 
 
 @Command
-public class Survey extends ApplicationCommand {
+public class Survey {
     @NotNull private final LazyLibrary library;
 
     public Survey(@NotNull LazyLibrary library) {

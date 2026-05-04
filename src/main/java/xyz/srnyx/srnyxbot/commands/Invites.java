@@ -1,7 +1,6 @@
 package xyz.srnyx.srnyxbot.commands;
 
 import io.github.freya022.botcommands.api.commands.annotations.Command;
-import io.github.freya022.botcommands.api.commands.application.ApplicationCommand;
 import io.github.freya022.botcommands.api.commands.application.CommandScope;
 import io.github.freya022.botcommands.api.commands.application.slash.GuildSlashEvent;
 import io.github.freya022.botcommands.api.commands.application.slash.annotations.*;
@@ -17,7 +16,7 @@ import java.util.Objects;
 
 
 @Command
-public class Invites extends ApplicationCommand {
+public class Invites {
     @NotNull private final LazyLibrary library;
 
     public Invites(@NotNull LazyLibrary library) {

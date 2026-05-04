@@ -1,7 +1,6 @@
 package xyz.srnyx.srnyxbot.commands.mass;
 
 import io.github.freya022.botcommands.api.commands.annotations.Command;
-import io.github.freya022.botcommands.api.commands.application.ApplicationCommand;
 import io.github.freya022.botcommands.api.commands.application.CommandScope;
 import io.github.freya022.botcommands.api.commands.application.slash.GuildSlashEvent;
 import io.github.freya022.botcommands.api.commands.application.slash.annotations.JDASlashCommand;
@@ -19,7 +18,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import xyz.srnyx.lazylibrary.LazyEmoji;
+import xyz.srnyx.lazylibrary.emoji.LazyEmoji;
 import xyz.srnyx.lazylibrary.LazyLibrary;
 
 import java.util.List;
@@ -27,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 
 @Command
-public class MassDeleteChannels extends ApplicationCommand {
+public class MassDeleteChannels {
     @NotNull private final LazyLibrary library;
     @NotNull private final Buttons buttons;
 
@@ -62,11 +61,11 @@ public class MassDeleteChannels extends ApplicationCommand {
         event.replyComponents(
                 TextDisplay.of(LazyEmoji.WARNING + " Are you sure you want to delete ALL " + channelCount + " channels in **" + categoryName + "**?"),
                 ActionRow.of(
-                        buttons.success("Yes, DELETE all channels", LazyEmoji.YES_CLEAR.emoji).ephemeral()
+                        buttons.success("Yes, DELETE all channels", LazyEmoji.YES_CLEAR).ephemeral()
                                 .bindTo(button -> {
                                     // Add cancel button
                                     button.editComponents(Section.of(
-                                            buttons.danger("Cancel", LazyEmoji.NO_CLEAR_DARK.emoji).ephemeral()
+                                            buttons.danger("Cancel", LazyEmoji.NO_CLEAR_DARK).ephemeral()
                                                     .bindTo(cancelButton -> {
                                                         cancel.set(true);
                                                         cancelButton.editComponents(TextDisplay.of(LazyEmoji.NO + " Mass channel deletion for **" + categoryName + "** cancelled!")).queue();
@@ -80,7 +79,7 @@ public class MassDeleteChannels extends ApplicationCommand {
                                         channel.delete().reason(reason).setCheck(() -> !cancel.get()).queue();
                                     }
                                 }).build(),
-                        buttons.danger("No, KEEP channels", LazyEmoji.NO_CLEAR_DARK.emoji).ephemeral()
+                        buttons.danger("No, KEEP channels", LazyEmoji.NO_CLEAR_DARK).ephemeral()
                                 .bindTo(button -> button.editComponents(TextDisplay.of(LazyEmoji.NO + " Mass channel deletion for **" + categoryName + "** cancelled!")).useComponentsV2().queue())
                                 .build())).setEphemeral(true).useComponentsV2().queue();
     }

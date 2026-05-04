@@ -1,7 +1,6 @@
 package xyz.srnyx.srnyxbot.commands.mass;
 
 import io.github.freya022.botcommands.api.commands.annotations.Command;
-import io.github.freya022.botcommands.api.commands.application.ApplicationCommand;
 import io.github.freya022.botcommands.api.commands.application.slash.GuildSlashEvent;
 import io.github.freya022.botcommands.api.commands.application.slash.annotations.JDASlashCommand;
 import io.github.freya022.botcommands.api.commands.application.slash.annotations.SlashOption;
@@ -20,7 +19,7 @@ import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import xyz.srnyx.lazylibrary.LazyEmoji;
+import xyz.srnyx.lazylibrary.emoji.LazyEmoji;
 import xyz.srnyx.lazylibrary.LazyLibrary;
 
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 
 @Command
-public class MassSay extends ApplicationCommand {
+public class MassSay {
     @NotNull private final LazyLibrary library;
     @NotNull private final Buttons buttons;
 
@@ -63,12 +62,12 @@ public class MassSay extends ApplicationCommand {
         event.replyComponents(
                 TextDisplay.of(LazyEmoji.WARNING + " Are you sure you want to send the following message to all " + channelCount + " channels in " + categoryName + "?\n\n" + message),
                 ActionRow.of(
-                        buttons.success("Yes, send messages", LazyEmoji.YES_CLEAR.emoji).ephemeral()
+                        buttons.success("Yes, send messages", LazyEmoji.YES_CLEAR).ephemeral()
                                 .bindTo(button -> {
                                     // Add cancel button
                                     final AtomicBoolean cancel = new AtomicBoolean(false);
                                     button.editComponents(Section.of(
-                                            buttons.danger("Cancel", LazyEmoji.NO_CLEAR_DARK.emoji).ephemeral()
+                                            buttons.danger("Cancel", LazyEmoji.NO_CLEAR_DARK).ephemeral()
                                                     .bindTo(cancelButton -> {
                                                         cancel.set(true);
                                                         cancelButton.editComponents(TextDisplay.of(LazyEmoji.NO + " Mass say for " + categoryName + " cancelled!")).useComponentsV2().queue();
@@ -92,7 +91,7 @@ public class MassSay extends ApplicationCommand {
                                                 if (!cancel.get()) button.getHook().editOriginalComponents(TextDisplay.of(LazyEmoji.NO + " An error occurred while sending messages in " + categoryName + "!")).useComponentsV2().queue();
                                             });
                                 }).build(),
-                        buttons.danger("No, DON'T send messages", LazyEmoji.NO_CLEAR_DARK.emoji).ephemeral()
+                        buttons.danger("No, DON'T send messages", LazyEmoji.NO_CLEAR_DARK).ephemeral()
                                 .bindTo(button -> button.editComponents(TextDisplay.of(LazyEmoji.NO + " Mass say for " + categoryName + " cancelled!")).useComponentsV2().queue())
                                 .build())).setEphemeral(true).useComponentsV2().queue();
     }
