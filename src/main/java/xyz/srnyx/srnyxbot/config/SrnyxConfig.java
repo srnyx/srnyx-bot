@@ -12,7 +12,7 @@ import org.spongepowered.configurate.ConfigurationNode;
 import xyz.srnyx.javautilities.manipulation.Mapper;
 
 import xyz.srnyx.lazylibrary.LazyLibrary;
-import xyz.srnyx.lazylibrary.config.LazyRole;
+import xyz.srnyx.lazylibrary.config.ConfigRole;
 
 import xyz.srnyx.srnyxbot.SrnyxBot;
 
@@ -78,12 +78,12 @@ public class SrnyxConfig {
     public class PlayHosting implements Supplier<Guild> {
         @Nullable public final String token;
         public final long guildId;
-        @NotNull public final LazyRole support;
+        @NotNull public final ConfigRole support;
 
         public PlayHosting(@NotNull ConfigurationNode node) {
             this.token = node.node("token").getString();
             this.guildId = node.node("guild").getLong();
-            this.support = new LazyRole(this, node.node("support"));
+            this.support = new ConfigRole(this, node.node("support"));
         }
 
         @Override @NotNull
@@ -95,12 +95,12 @@ public class SrnyxConfig {
     public class Advertising implements Supplier<Guild> {
         public final long guildId;
         @NotNull public final String invite;
-        @NotNull public final LazyRole role;
+        @NotNull public final ConfigRole role;
 
         public Advertising(long guildId, @NotNull ConfigurationNode node) {
             this.guildId = guildId;
             this.invite = ".gg/" + Objects.requireNonNull(node.node("invite").getString());
-            this.role = new LazyRole(this, node.node("role"));
+            this.role = new ConfigRole(this, node.node("role"));
         }
 
         @Override @NotNull

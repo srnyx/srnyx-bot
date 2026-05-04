@@ -7,6 +7,13 @@ token: "PUT_BOT_TOKEN_HERE"
 # Supports: MariaDB, SQLite, PostgreSQL, H2
 database: "PUT_CONNECTION_STRING_HERE"
 
+# RECOMMENDED (if using Pterodactyl)
+# The bot will use the Pterodactyl API to gracefully stop the server when requested
+pterodactyl:
+  panel-url: "PUT_PTERODACTYL_PANEL_URL_HERE" # Example: panel.lilypad.gg
+  api-key: "PUT_PTERODACTYL_API_KEY_HERE"
+  server-id: "PUT_PTERODACTYL_SERVER_ID_HERE"
+
 # RECOMMENDED
 # Owner IDs of the bot
 owners:
