@@ -29,7 +29,7 @@ public class Names {
                 .onSuccess(members -> {
                     final StringBuilder builder = new StringBuilder("Name,ID,Mention");
                     for (final Member member : members) if (member.getEffectiveName().contains(substring)) builder.append("\n").append(member.getEffectiveName()).append(",").append(member.getId()).append(",").append(member.getAsMention());
-                    event.getHook().editOriginalAttachments(FileUpload.fromData(builder.toString().getBytes(), "names_" + substring)).queue();
+                    event.getHook().editOriginalAttachments(FileUpload.fromData(builder.toString().getBytes(), "names_" + substring + ".csv")).queue();
                 });
     }
 }
