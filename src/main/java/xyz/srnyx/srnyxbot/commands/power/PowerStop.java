@@ -1,10 +1,8 @@
 package xyz.srnyx.srnyxbot.commands.power;
 
 import io.github.freya022.botcommands.api.commands.annotations.Command;
-import io.github.freya022.botcommands.api.commands.application.CommandScope;
 import io.github.freya022.botcommands.api.commands.application.slash.GlobalSlashEvent;
 import io.github.freya022.botcommands.api.commands.application.slash.annotations.JDASlashCommand;
-import io.github.freya022.botcommands.api.commands.application.slash.annotations.TopLevelSlashCommandData;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +21,6 @@ public class PowerStop {
         this.power = power;
     }
 
-    @TopLevelSlashCommandData(scope = CommandScope.GLOBAL)
     @JDASlashCommand(
             name = "power",
             subcommand = "stop",
