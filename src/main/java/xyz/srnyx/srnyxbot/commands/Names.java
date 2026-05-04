@@ -10,10 +10,9 @@ import io.github.freya022.botcommands.api.commands.application.slash.annotations
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.utils.FileUpload;
 
 import org.jetbrains.annotations.NotNull;
-
-import xyz.srnyx.lazylibrary.emoji.LazyEmoji;
 
 
 @Command
@@ -28,16 +27,9 @@ public class Names {
         event.deferReply(true).queue();
         event.getGuild().loadMembers()
                 .onSuccess(members -> {
-                    // Get members
-                    final StringBuilder builder = new StringBuilder();
-                    for (final Member member : members) if (member.getEffectiveName().contains(substring)) builder.append(member.getAsMention()).append("\n");
-                    if (builder.isEmpty()) {
-                        event.getHook().editOriginal(LazyEmoji.NO + " No members with that substring in their name!").queue();
-                        return;
-                    }
-
-                    // Reply
-                    event.getHook().editOriginal(builder.toString()).queue();
+                    final StringBuilder builder = new StringBuilder("Name,ID,Mention");
+                    for (final Member member : members) if (member.getEffectiveName().contains(substring)) builder.append("\n").append(member.getEffectiveName()).append(",").append(member.getId()).append(",").append(member.getAsMention());
+                    event.getHook().editOriginalAttachments(FileUpload.fromData(builder.toString().getBytes(), "names_" + substring)).queue();
                 });
     }
 }
