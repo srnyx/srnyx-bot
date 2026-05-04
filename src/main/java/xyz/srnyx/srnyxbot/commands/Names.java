@@ -2,9 +2,11 @@ package xyz.srnyx.srnyxbot.commands;
 
 import io.github.freya022.botcommands.api.commands.annotations.Command;
 import io.github.freya022.botcommands.api.commands.annotations.UserPermissions;
+import io.github.freya022.botcommands.api.commands.application.CommandScope;
 import io.github.freya022.botcommands.api.commands.application.slash.GuildSlashEvent;
 import io.github.freya022.botcommands.api.commands.application.slash.annotations.JDASlashCommand;
 import io.github.freya022.botcommands.api.commands.application.slash.annotations.SlashOption;
+import io.github.freya022.botcommands.api.commands.application.slash.annotations.TopLevelSlashCommandData;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -16,6 +18,7 @@ import xyz.srnyx.lazylibrary.emoji.LazyEmoji;
 
 @Command
 public class Names {
+    @TopLevelSlashCommandData(scope = CommandScope.GUILD)
     @UserPermissions({Permission.NICKNAME_MANAGE, Permission.MANAGE_SERVER})
     @JDASlashCommand(
             name = "names",
