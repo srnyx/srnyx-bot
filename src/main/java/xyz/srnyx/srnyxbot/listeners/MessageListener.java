@@ -1,16 +1,11 @@
 package xyz.srnyx.srnyxbot.listeners;
 
-import io.github.freya022.botcommands.api.core.annotations.BEventListener;
-import io.github.freya022.botcommands.api.core.service.annotations.BService;
-
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.UnicodeEmoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-
 import org.jetbrains.annotations.NotNull;
-
 import xyz.srnyx.javautilities.MapGenerator;
 
 import java.util.List;
@@ -18,7 +13,8 @@ import java.util.Map;
 import java.util.Set;
 
 
-@BService
+// THIS LISTENER IS DISABLED TO AVOID MESSAGE_CONTENT PRIVILEGED INTENT
+//@BService
 public class MessageListener {
     @NotNull private static final Map<Character, UnicodeEmoji> ALPHABET_EMOJIS = MapGenerator.HASH_MAP.mapOf(
             List.of('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'),
@@ -32,7 +28,7 @@ public class MessageListener {
     @NotNull private static final Set<String> REACT_IGNORED = Set.of("reaction", "reactions", "reactivate");
     private static final int REACT_TRIGGER_LENGTH = REACT_TRIGGER.length();
 
-    @BEventListener
+//    @BEventListener
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         final Member member = event.getMember();
         if (member == null) return;

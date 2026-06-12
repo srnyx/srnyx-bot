@@ -27,7 +27,6 @@ public class SrnyxBot {
         LazyLibrary.INSTANCE
                 .gatewayIntents(
                         GatewayIntent.SCHEDULED_EVENTS,
-                        GatewayIntent.MESSAGE_CONTENT,
                         GatewayIntent.DIRECT_MESSAGES,
                         GatewayIntent.GUILD_PRESENCES,
                         GatewayIntent.GUILD_EXPRESSIONS,
