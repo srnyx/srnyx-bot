@@ -4,19 +4,15 @@ import io.github.freya022.botcommands.api.components.Buttons;
 import io.github.freya022.botcommands.api.components.annotations.JDAButtonListener;
 import io.github.freya022.botcommands.api.components.event.ButtonEvent;
 import io.github.freya022.botcommands.api.core.annotations.Handler;
-
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.UserSnowflake;
-
 import org.jetbrains.annotations.NotNull;
-
 import xyz.srnyx.lazylibrary.LazyComponent;
 import xyz.srnyx.lazylibrary.emoji.LazyEmoji;
-
 import xyz.srnyx.srnyxbot.config.Approval;
 import xyz.srnyx.srnyxbot.config.SrnyxConfig;
 

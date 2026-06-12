@@ -3,13 +3,10 @@ package xyz.srnyx.srnyxbot;
 import io.github.freya022.botcommands.api.core.annotations.BEventListener;
 import io.github.freya022.botcommands.api.core.events.InjectedJDAEvent;
 import io.github.freya022.botcommands.api.core.service.annotations.BService;
-
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-
 import org.jetbrains.annotations.NotNull;
-
 import xyz.srnyx.lazylibrary.LazyLibrary;
 
 import xyz.srnyx.srnyxbot.config.SrnyxConfig;
@@ -26,7 +23,7 @@ public class SrnyxBot {
         jda.addEventListener(new VoiceListener(config));
     }
 
-    public static void main(@NotNull String[] arguments) {
+    static void main() {
         LazyLibrary.INSTANCE
                 .gatewayIntents(
                         GatewayIntent.SCHEDULED_EVENTS,
