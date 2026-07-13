@@ -17,5 +17,5 @@ jobs:
     uses: srnyx/tools/.github/workflows/build.yml@main
     with:
       java: 26
-      pterodactyl-server: 869617e4
+      pterodactyl-server: "869617e4" # Wrap in quotes to prevent parsing as number (e4 is scientific notation...)
     secrets: inherit
