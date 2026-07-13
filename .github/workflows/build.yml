@@ -18,3 +18,4 @@ jobs:
     with:
       java: 26
       pterodactyl-server: 869617e4
+    secrets: inherit
