@@ -5,8 +5,8 @@ import xyz.srnyx.gradlegalaxy.utility.setupLazyLibrary
 
 plugins {
     application
-    id("xyz.srnyx.gradle-galaxy") version "3.0.1"
-    id("com.gradleup.shadow") version "9.4.2"
+    id("xyz.srnyx.gradle-galaxy") version "3.2.0"
+    id("com.gradleup.shadow") version "9.5.1"
 }
 
 setupLazyLibrary(
@@ -14,5 +14,5 @@ setupLazyLibrary(
         group = "xyz.srnyx",
         version = "2.0.0",
         description = "General purpose bot for srnyx"),
-    jdaConfig = DependencyConfig(version = "6.4.2"),
-    lazyLibraryConfig = DependencyConfig(version = "f08a09d"))
+    jdaConfig = DependencyConfig(version = "6.5.0"),
+    lazyLibraryConfig = DependencyConfig(version = "8cb5ea4"))

@@ -16,5 +16,5 @@ jobs:
   build:
     uses: srnyx/tools/.github/workflows/build.yml@main
     with:
-      name: "srnyx's Bot"
       java: 21
+      pterodactyl-server: 869617e4
