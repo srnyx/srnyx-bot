@@ -2,7 +2,7 @@ name: Build
 on:
   push:
     branches:
-      - master
+      - botcommands-v3
     paths:
       - 'gradle/**'
       - 'src/**'
